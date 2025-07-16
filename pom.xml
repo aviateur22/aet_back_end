@@ -85,8 +85,8 @@
 
                 <!--Image Path-->
                 <resource.image>classpath:/image/</resource.image>
-                <memory.card.front.path>/C:/Programmation/java/aet/images/memoryCardGame/frontImage</memory.card.front.path>
-                <memory.card.back.path>/C:/Programmation/java/aet/images/memoryCardGame/backImage</memory.card.back.path>
+                <memory.card.front.path>/C:/Programmation/java/aet/images/memoryCardGame/frontImage/</memory.card.front.path>
+                <memory.card.back.path>/C:/Programmation/java/aet/images/memoryCardGame/backImage/</memory.card.back.path>
             </properties>
         </profile>
         <profile>

@@ -1,26 +1,33 @@
 package com.ctoutweb.aet.core.entity.memoryCardGame;
 
-import com.ctoutweb.aet.core.provider.CoreFactoryProvider;
+import com.ctoutweb.aet.core.exception.GameParameterException;
+import com.ctoutweb.aet.core.provider.CoreFactory;
+
+import java.util.Arrays;
 
 public enum GameLevel {
-  EASY(CoreFactoryProvider.getCoreFactory().getBornRangeImpl(2,5), CoreFactoryProvider.getCoreFactory().getBornRangeImpl(9, 13)),
-  MEDIUM(CoreFactoryProvider.getCoreFactory().getBornRangeImpl(4,7), CoreFactoryProvider.getCoreFactory().getBornRangeImpl(12,18)),
-  DIFFICULT(CoreFactoryProvider.getCoreFactory().getBornRangeImpl(6, 10), CoreFactoryProvider.getCoreFactory().getBornRangeImpl(15, 25));
+  EASY(loadLevelParameter(LevelType.EASY)),
+  MEDIUM(loadLevelParameter(LevelType.MEDIUM)),
+  DIFFICULT(loadLevelParameter(LevelType.DIFFICULT));
 
-  private IBornRange cardsQuantityToFindBorn;
-  private IBornRange  cardsQuantityInGameBorn;
+  // Quantité de cartes a trouver
+  private ILevelParameter levelParameter;
 
-  private GameLevel(IBornRange cardsQuantityToFindBorn, IBornRange cardsQauntityInGameBorn) {
-    this.cardsQuantityInGameBorn = cardsQauntityInGameBorn;
-    this.cardsQuantityToFindBorn = cardsQuantityToFindBorn;
+  private GameLevel(ILevelParameter levelParameter) {
+    this.levelParameter= levelParameter;
   }
 
-  public IBornRange getCardsQuantityToFindBorn() {
-    return this.cardsQuantityToFindBorn;
+  public ILevelParameter getLevelParameter() {
+    return this.levelParameter;
   }
 
-  public IBornRange getCardsQuantityInGameBorn() {
-    return this.cardsQuantityInGameBorn;
+  private static ILevelParameter loadLevelParameter(LevelType levelType) {
+    return CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideLevelParameter(levelType);
   }
-
+  public static GameLevel loadGameLevel(String levelName) {
+    return Arrays.stream(GameLevel.values())
+            .filter(level -> level.name().equalsIgnoreCase(levelName.trim()))
+            .findFirst()
+            .orElseThrow(()->new GameParameterException("Le niveau du jeu n'existe pas"));
+  }
 }

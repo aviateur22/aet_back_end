@@ -1,9 +1,8 @@
 package com.ctoutweb.aet.infra.service;
 
 import com.ctoutweb.aet.infra.model.IImageData;
-import com.ctoutweb.aet.infra.model.ImageFace;
-import com.ctoutweb.aet.infra.service.impl.FolderImageLoaderServiceImpl;
-import com.ctoutweb.aet.infra.factory.Factory;
+import com.ctoutweb.aet.infra.model.memoryCardGame.ImageFace;
+import com.ctoutweb.aet.infra.service.imageLoaderService.FolderImageLoaderServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -15,18 +14,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class FolderImageLoaderServiceImplTest {
@@ -40,7 +33,6 @@ public class FolderImageLoaderServiceImplTest {
   private IImageData imageData2;
   @MockBean
   private ResourcePatternResolver resourcePatternResolver;
-  private Factory factory = new Factory();
   @Autowired
   private FolderImageLoaderServiceImpl folderImageLoaderService;
   @DynamicPropertySource

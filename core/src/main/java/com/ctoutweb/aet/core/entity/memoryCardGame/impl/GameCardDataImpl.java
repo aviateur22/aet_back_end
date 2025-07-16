@@ -1,12 +1,12 @@
-package com.ctoutweb.aet.core.usecase.memoryCardGame.boundary.impl;
+package com.ctoutweb.aet.core.entity.memoryCardGame.impl;
 
 import com.ctoutweb.aet.core.entity.gameText.IGameTextInformation;
 import com.ctoutweb.aet.core.entity.memoryCardGame.Card;
 import com.ctoutweb.aet.core.entity.memoryCardGame.CardToFind;
 import com.ctoutweb.aet.core.entity.memoryCardGame.GameLevel;
-import com.ctoutweb.aet.core.usecase.memoryCardGame.boundary.IGenerateNewGameResponse;
+import com.ctoutweb.aet.core.entity.memoryCardGame.IGameCardData;
 
-public class MemoryCardDataImpl implements IGenerateNewGameResponse {
+public class GameCardDataImpl implements IGameCardData {
   private IGameTextInformation gameTextInformation;
   private CardToFind cardToFindInGame;
   private Card[] cards;
@@ -16,61 +16,83 @@ public class MemoryCardDataImpl implements IGenerateNewGameResponse {
   private short errorQuantity;
   private int timeInSecToFinish;
 
-  public MemoryCardDataImpl(
-          IGameTextInformation gameTextInformation,
-          CardToFind cardToFindInGame, Card[] cards,
-          GameLevel gameLevel,
-          short timeToObserveBeforeStart,
-          short cardToFindQuantity,
-          short errorQuantity,
-          int timeInSecToFinish) {
+  @Override
+  public void setCardToFindQuantity(short quantity) {
+    this.cardToFindQuantity = quantity;
+  }
+
+  @Override
+  public void setGameTextInformation(IGameTextInformation gameTextInformation) {
     this.gameTextInformation = gameTextInformation;
-    this.cardToFindInGame = cardToFindInGame;
+  }
+
+  @Override
+  public void setCardToFindInGame(CardToFind cardToFind) {
+    this.cardToFindInGame = cardToFind;
+  }
+
+  @Override
+  public void setCards(Card[] cards) {
     this.cards = cards;
+  }
+
+  @Override
+  public void setGameLevel(GameLevel gameLevel) {
     this.gameLevel = gameLevel;
+  }
+
+  @Override
+  public void setTimeToObserveBeforeStart(short timeToObserveBeforeStart) {
     this.timeToObserveBeforeStart = timeToObserveBeforeStart;
-    this.cardToFindQuantity = cardToFindQuantity;
-    this.errorQuantity = errorQuantity;
+  }
+
+  @Override
+  public void setMaxErrorQuantity(short maxErrorQuantity) {
+    this.errorQuantity = maxErrorQuantity;
+  }
+
+  @Override
+  public void setTimeInSecToFinish(int timeInSecToFinish) {
     this.timeInSecToFinish = timeInSecToFinish;
   }
 
   @Override
   public IGameTextInformation getGameTextInformation() {
-    return gameTextInformation;
+    return this.gameTextInformation;
   }
 
   @Override
   public CardToFind getCardToFindInGame() {
-    return cardToFindInGame;
+    return this.cardToFindInGame;
   }
 
   @Override
   public Card[] getCards() {
-    return cards;
+    return this.cards;
   }
 
   @Override
   public GameLevel getGameLevel() {
-    return gameLevel;
+    return this.gameLevel;
   }
 
   @Override
   public short getTimeToObserveBeforeStart() {
-    return timeToObserveBeforeStart;
+    return this.timeToObserveBeforeStart;
   }
 
   @Override
   public short getCardToFindQuantity() {
-    return cardToFindQuantity;
+    return this.cardToFindQuantity;
   }
 
   @Override
   public short getMaxErrorQuantity() {
-    return errorQuantity;
+    return this.errorQuantity;
   }
 
   @Override
   public int getTimeInSecToFinish() {
-    return timeInSecToFinish;
+    return this.timeInSecToFinish;
   }
 }

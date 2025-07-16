@@ -35,7 +35,7 @@ public class ArrayUtil {
   }
   public static <T> T[] selectMultipleRandomItem(T[] initialArray, int requestedArrayLength) {
     if (initialArray == null || initialArray.length == 0) {
-      return null;
+      return initialArray;
     }
 
     if (requestedArrayLength < 0 )
@@ -53,7 +53,7 @@ public class ArrayUtil {
 
     return selectMultipleItemArray;
   }
-  public static <T> T[] selectSameItemMultipleTime(T[] initialArray,int indexToSelect, int requestedArrayLength) {
+  public static <T> T[] selectSameItemMultipleTimeByIndex(T[] initialArray, int indexToSelect, int requestedArrayLength) {
     if (initialArray == null || initialArray.length == 0) {
       return null;
     }
@@ -66,6 +66,19 @@ public class ArrayUtil {
     for(int i = 0; i <= requestedArrayLength - 1; i++ ){
       T selectedElement = initialArray[indexToSelect];
       selectSameItemArrayCopy[i] = selectedElement;
+    }
+
+    return selectSameItemArrayCopy;
+  }
+  public static <T> T[] selectSameItemMultipleTimeByValue(T[] initialArray, T item, int requestedArrayLength) {
+    if (initialArray == null || initialArray.length == 0) {
+      return null;
+    }
+
+    var selectSameItemArrayCopy = (T[]) Array.newInstance(initialArray.getClass().getComponentType(), requestedArrayLength);
+
+    for(int i = 0; i <= requestedArrayLength - 1; i++ ){
+      selectSameItemArrayCopy[i] = item;
     }
 
     return selectSameItemArrayCopy;
@@ -92,7 +105,7 @@ public class ArrayUtil {
 
     return combineArray;
   }
-  public static <T> T[] removeItem(T[] arrayWithElementToRemove, int indexToRemove) {
+  public static <T> T[] removeItemByIndex(T[] arrayWithElementToRemove, int indexToRemove) {
     if (arrayWithElementToRemove == null || arrayWithElementToRemove.length == 0) {
       return arrayWithElementToRemove;
     }
@@ -111,4 +124,33 @@ public class ArrayUtil {
 
     return updatedArray;
   }
+  public static <T> T[] removeItemByItemValue(T[] arrayWithElementToRemove, T itemToRemove) {
+    if (arrayWithElementToRemove == null || arrayWithElementToRemove.length == 0) {
+      return arrayWithElementToRemove;
+    }
+
+    if(!arrayContains(arrayWithElementToRemove, itemToRemove))
+      return arrayWithElementToRemove;
+
+    T[] updatedArray = (T[]) Array.newInstance(arrayWithElementToRemove.getClass().getComponentType(), arrayWithElementToRemove.length - 1);
+
+    int j = 0;
+    for (int i = 0; i < arrayWithElementToRemove.length; i++) {
+      if (arrayWithElementToRemove[i].equals(itemToRemove))
+        continue;
+      updatedArray[j++] = arrayWithElementToRemove[i];
+    }
+
+    return updatedArray;
+  }
+  public static <T> boolean arrayContains(T[] array, T value) {
+    if (array == null) return false;
+    for (T item : array) {
+      if (item.equals(value)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }

@@ -27,8 +27,8 @@ public class ArrayUtilTest {
     /**
      * then
      */
-    Assertions.assertTrue(arrayContains(list1, result1));
-    Assertions.assertEquals(1, result2);
+    Assertions.assertTrue(arrayContains(list1, result1.getItem()));
+    Assertions.assertEquals(1, result2.getItem());
     Assertions.assertNull(result3);
 
   }
@@ -59,7 +59,7 @@ public class ArrayUtilTest {
   }
 
   @Test
-  void removeItem_test_method() {
+  void removeItem_by_index_test_method() {
     /**
      * given
      */
@@ -68,11 +68,11 @@ public class ArrayUtilTest {
     /**
      * when
      */
-    Integer[] result1 = ArrayUtil.removeItem(list1, 1);
-    Integer[] result2 = ArrayUtil.removeItem(list1, 7);
-    Integer[] result3 = ArrayUtil.removeItem(list1, -1);
-    Integer[] result4 = ArrayUtil.removeItem(list1, 5);
-    Integer[] result5 = ArrayUtil.removeItem(list1, 0);
+    Integer[] result1 = ArrayUtil.removeItemByIndex(list1, 1);
+    Integer[] result2 = ArrayUtil.removeItemByIndex(list1, 7);
+    Integer[] result3 = ArrayUtil.removeItemByIndex(list1, -1);
+    Integer[] result4 = ArrayUtil.removeItemByIndex(list1, 5);
+    Integer[] result5 = ArrayUtil.removeItemByIndex(list1, 0);
 
 
     /**
@@ -127,7 +127,7 @@ public class ArrayUtilTest {
   }
 
   @Test
-  void selectSameItemMultipleTime_test_method() {
+  void selectSameItemMultipleTimeByIndex_test_method() {
     /**
      * given
      */
@@ -136,8 +136,8 @@ public class ArrayUtilTest {
     /**
      * when
      */
-    Integer[] result1 = ArrayUtil.selectSameItemMultipleTime(list1, 2,4);
-    Integer[] result2 = ArrayUtil.selectSameItemMultipleTime(list1, -1, 6);
+    Integer[] result1 = ArrayUtil.selectSameItemMultipleTimeByIndex(list1, 2,4);
+    Integer[] result2 = ArrayUtil.selectSameItemMultipleTimeByIndex(list1, -1, 6);
 
     /**
      * then
@@ -149,6 +149,53 @@ public class ArrayUtilTest {
 
     Assertions.assertEquals(6, result2.length);
 
+  }
+
+  @Test
+  void selectSameItemMultipleTimeByValue_test_method() {
+    /**
+     * given
+     */
+    Integer[] list1 = Arrays.asList(1, 2, 3, 4, 5, 6).toArray(Integer[]::new);
+
+    /**
+     * when
+     */
+    Integer[] result1 = ArrayUtil.selectSameItemMultipleTimeByValue(list1, 2,4);
+    Integer[] result2 = ArrayUtil.selectSameItemMultipleTimeByValue(list1, -1, 6);
+
+    /**
+     * then
+     */
+    Assertions.assertEquals(4, result1.length);
+    for(int item : result1) {
+      Assertions.assertEquals(2, item);
+    }
+
+    Assertions.assertEquals(6, result2.length);
+  }
+
+  @Test
+  void removeItemByItemValue_test_method() {
+    /**
+     * given
+     */
+    Integer[] list1 = Arrays.asList(1, 1, 2, 3, 4, 5, 6).toArray(Integer[]::new);
+
+    /**
+     * when
+     */
+    Integer[] result1 = ArrayUtil.removeItemByItemValue(list1, 1);
+    Integer[] result2 = ArrayUtil.removeItemByItemValue(list1, 7);
+    Integer[] result3 = ArrayUtil.removeItemByItemValue(list1, 2);
+
+
+    /**
+     * then
+     */
+    Assertions.assertEquals(6, result1.length);
+    Assertions.assertEquals(7, result2.length);
+    Assertions.assertEquals(6, result3.length);
   }
 
   void combineArrays_test_method() {
