@@ -1,22 +1,15 @@
 package com.ctoutweb.aet.infra.provider.memoryCardGame;
 
 import com.ctoutweb.aet.core.entity.memoryCardGame.ParameterState;
-import com.ctoutweb.aet.core.usecase.memoryCardGame.boundary.IGenerateNewGameRequest;
+import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameRequest;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
 import com.ctoutweb.aet.infra.model.gameText.GamePresentation;
 import com.ctoutweb.aet.infra.model.gameText.GameTextInformationImpl;
 import com.ctoutweb.aet.infra.model.memoryCardGame.adapter.GenerateNewGameRequestImpl;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameResponseDto;
-import com.ctoutweb.aet.infra.model.IImageData;
-import com.ctoutweb.aet.infra.model.ImageDataImpl;
 import com.ctoutweb.aet.infra.model.memoryCardGame.*;
 
 public class MemoryCardInstanceProviderImpl implements IMemoryCardInstanceProvider{
-  @Override
-  public IImageData providerImageData(String imagePath, String imageName) {
-    return new ImageDataImpl(imagePath, imageName);
-  }
-
   @Override
   public GenerateMemoryCardGameRequestDto provideMemoryCardGameRequestDto(GameLevel level, GameParameter parameter) {
     return new GenerateMemoryCardGameRequestDto(level, parameter);
@@ -77,7 +70,7 @@ public class MemoryCardInstanceProviderImpl implements IMemoryCardInstanceProvid
   }
 
   @Override
-  public Card provideCard(CardImage cardImage, boolean isCardToFind) {
-    return new Card(cardImage, isCardToFind);
+  public Card provideCard(int id, CardImage cardImage, boolean isCardToFind) {
+    return new Card(id, cardImage, isCardToFind);
   }
 }

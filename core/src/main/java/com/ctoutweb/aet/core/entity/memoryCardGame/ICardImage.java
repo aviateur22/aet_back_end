@@ -4,6 +4,16 @@ package com.ctoutweb.aet.core.entity.memoryCardGame;
  * Carte composée avec le path de l'image de face et arrière
  */
 public interface ICardImage {
-  String getCardFrontImagePath();
-  String getCardBackImagePath();
+  /**
+   * Nom unique de l'image de la face avant
+   * @return String
+   */
+  String getImageFrontName();
+
+  /**
+   * Nom unique de l'image composant la face arriere.
+   * Toutes les carte d'une partie ont la même face arriere
+   * @return String
+   */
+  String getImageBackName();
 }

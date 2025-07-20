@@ -1,3 +1,3 @@
 package com.ctoutweb.aet.infra.model.memoryCardGame;
 
-public record CardImage(String cardFrontImagePath, String  cardBackImagePath) {}
+public record CardImage(String cardFrontImageName, String cardBackImageName) {}

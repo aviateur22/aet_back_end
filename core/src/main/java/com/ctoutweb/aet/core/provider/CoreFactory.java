@@ -1,9 +1,9 @@
 package com.ctoutweb.aet.core.provider;
 
-import com.ctoutweb.aet.core.usecase.memoryCardGame.provider.IBusinessInstanceProvider;
-import com.ctoutweb.aet.core.usecase.memoryCardGame.provider.IDomainModelInstanceProvider;
-import com.ctoutweb.aet.core.usecase.memoryCardGame.provider.IMemoryGameInstanceProvider;
-import com.ctoutweb.aet.core.usecase.memoryCardGame.provider.impl.MemoryCardInstanceProviderImpl;
+import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.provider.IBusinessInstanceProvider;
+import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.provider.IDomainModelInstanceProvider;
+import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.provider.IMemoryGameInstanceProvider;
+import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.provider.impl.MemoryCardInstanceProviderImpl;
 
 public class CoreFactory {
   private static final IMemoryGameInstanceProvider MEMORY_CARD_INSTANCE_PROVIDER_HOLDER = new MemoryCardInstanceProviderImpl();

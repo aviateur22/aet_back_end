@@ -5,5 +5,5 @@ package com.ctoutweb.aet.core.entity.memoryCardGame;
  * @param cardImages ICardImage - Cartes avec le path des  images avt et arr
  * @param isCardToFind boolean - Indique si cette carte fait partie des cartes a trouver
  */
-public record Card(ICardImage cardImages, boolean isCardToFind) {
+public record Card(int id, ICardImage cardImages, boolean isCardToFind) {
 }

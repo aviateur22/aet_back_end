@@ -1,19 +1,28 @@
 package com.ctoutweb.aet.infra.service.imageLoaderService;
 
-import com.ctoutweb.aet.infra.model.IImageData;
+import com.ctoutweb.aet.infra.model.image.IImageData;
+import com.ctoutweb.aet.infra.model.image.IStreamImage;
 import com.ctoutweb.aet.infra.model.memoryCardGame.ImageFace;
-import com.ctoutweb.aet.infra.provider.InfraFactory;
-import com.ctoutweb.aet.infra.provider.memoryCardGame.IMemoryCardInstanceProvider;
+import com.ctoutweb.aet.infra.repository.IImageRepository;
+import com.ctoutweb.aet.infra.repository.entity.ImageEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static com.ctoutweb.aet.infra.provider.InfraFactory.IMAGE_INSTANCE_PROVIDER;
 
 /**
  * IImageLoaderService
@@ -27,10 +36,11 @@ public class FolderImageLoaderServiceImpl implements IImageLoaderService {
   private String frontImagePath;
   @Value("${memory.card.back.path}")
   private String backImagePath;
+  private final IImageRepository imageRepository;
   private final ResourcePatternResolver resourceResolver;
-  private final IMemoryCardInstanceProvider memoryCardInstanceProvider = InfraFactory.INFRA_MEMORY_CARD_INSTANCE_PROVIDER;
 
-  public FolderImageLoaderServiceImpl(ResourcePatternResolver resourceResolver) {
+  public FolderImageLoaderServiceImpl(IImageRepository imageRepository, ResourcePatternResolver resourceResolver) {
+    this.imageRepository = imageRepository;
     this.resourceResolver = resourceResolver;
   }
 
@@ -47,8 +57,29 @@ public class FolderImageLoaderServiceImpl implements IImageLoaderService {
 
               if (filename == null) return null;
               String path = baseDir + filename;
-              return memoryCardInstanceProvider.providerImageData(path, filename);
+              return IMAGE_INSTANCE_PROVIDER.providerImageData(path, filename);
             })
             .toList();
+  }
+
+  @Override
+  public IStreamImage streamOneImage(String imageName) throws IOException {
+    ImageEntity image = this.imageRepository.findFirstByRandomName(imageName).orElse(null);
+
+    if (image == null)
+      return null;
+
+
+    File imageFile = new File(image.getImagePath());
+
+    if (!imageFile.exists() || imageFile.isDirectory()) {
+      return null;
+    }
+
+    String contentType = Files.probeContentType(imageFile.toPath());
+    long imageSize = imageFile.length();
+
+    var imageStream=  new InputStreamResource(new FileInputStream(imageFile));
+    return IMAGE_INSTANCE_PROVIDER.provideStreamImage(imageSize, MediaType.parseMediaType(contentType), imageStream);
   }
 }

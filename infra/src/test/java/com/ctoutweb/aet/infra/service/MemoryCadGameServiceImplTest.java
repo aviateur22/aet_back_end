@@ -1,13 +1,16 @@
 package com.ctoutweb.aet.infra.service;
 
 import com.ctoutweb.aet.core.exception.ImageException;
-import com.ctoutweb.aet.infra.adapter.memoryCardGame.boundary.MemoryCardGameAdapter;
+import com.ctoutweb.aet.infra.adapter.memoryCardGame.MemoryCardGameAdapter;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
-import com.ctoutweb.aet.infra.model.ImageDataImpl;
+import com.ctoutweb.aet.infra.model.image.ImageDataImpl;
 import com.ctoutweb.aet.infra.model.memoryCardGame.Card;
 import com.ctoutweb.aet.infra.model.memoryCardGame.GameLevel;
 import com.ctoutweb.aet.infra.model.memoryCardGame.GameParameter;
 import com.ctoutweb.aet.infra.model.memoryCardGame.ImageFace;
+import com.ctoutweb.aet.infra.repository.IMemoryCardGameImageFaceRepository;
+import com.ctoutweb.aet.infra.repository.IMemoryCardGameImageFamilyRepository;
+import com.ctoutweb.aet.infra.repository.IMemoryCardGameImageRepository;
 import com.ctoutweb.aet.infra.service.gameService.memoryCardGameService.impl.MemoryCardGameServiceImpl;
 import com.ctoutweb.aet.infra.service.imageLoaderService.IImageLoaderService;
 import org.junit.jupiter.api.Assertions;
@@ -24,23 +27,33 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.ctoutweb.aet.core.usecase.memoryCardGame.gameParameter.GameData.*;
-import static com.ctoutweb.aet.core.usecase.memoryCardGame.gameParameter.GameData.GAME_TITLE;
+import static com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.gameParameter.GameData.*;
 import static org.mockito.Mockito.when;
 
 public class MemoryCadGameServiceImplTest {
 
   private MemoryCardGameAdapter memoryCardGameAdapter;
-
   @Mock
   private IImageLoaderService imageLoaderService;
+  @Mock
+  private IMemoryCardGameImageRepository memoryCardGameImageRepository;
+  @Mock
+  private IMemoryCardGameImageFamilyRepository memoryCardGameImageFamilyRepository;
+  @Mock
+  private IMemoryCardGameImageFaceRepository memoryCardGameImageFaceRepository;
+  private
 
   MemoryCardGameServiceImpl memoryCardGameService;
 
   @BeforeEach
   void init() {
     MockitoAnnotations.openMocks(this);
-    memoryCardGameAdapter = new MemoryCardGameAdapter(imageLoaderService);
+    memoryCardGameAdapter = new MemoryCardGameAdapter(
+            imageLoaderService,
+            memoryCardGameImageRepository,
+            memoryCardGameImageFamilyRepository,
+            memoryCardGameImageFaceRepository);
+
     memoryCardGameService = new MemoryCardGameServiceImpl(memoryCardGameAdapter);
 
   }

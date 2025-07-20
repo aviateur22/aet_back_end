@@ -5,7 +5,7 @@ import com.ctoutweb.aet.core.entity.memoryCardGame.ILevelParameter;
 import com.ctoutweb.aet.core.entity.memoryCardGame.LevelType;
 import com.ctoutweb.aet.core.entity.memoryCardGame.ParameterState;
 
-import static com.ctoutweb.aet.core.usecase.memoryCardGame.gameParameter.LevelParameter.*;
+import static com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.gameParameter.LevelParameter.*;
 
 public class LevelParameterImpl implements ILevelParameter {
   protected LevelType levelType;

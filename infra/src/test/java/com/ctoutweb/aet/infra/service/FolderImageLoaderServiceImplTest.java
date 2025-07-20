@@ -1,6 +1,6 @@
 package com.ctoutweb.aet.infra.service;
 
-import com.ctoutweb.aet.infra.model.IImageData;
+import com.ctoutweb.aet.infra.model.image.IImageData;
 import com.ctoutweb.aet.infra.model.memoryCardGame.ImageFace;
 import com.ctoutweb.aet.infra.service.imageLoaderService.FolderImageLoaderServiceImpl;
 import org.junit.jupiter.api.BeforeEach;

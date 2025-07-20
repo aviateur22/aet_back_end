@@ -33,7 +33,8 @@
                 <war.name>aet-app</war.name>
 
                 <!-- API version-->
-                <api.version>/api/v1</api.version>
+                <api.version>v1</api.version>
+                <api.version.path>/api/${api.version}</api.version.path>
 
                 <!-- Database -->
                 <database.schema>sc_aet</database.schema>

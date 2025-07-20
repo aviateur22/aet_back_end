@@ -4,8 +4,9 @@ import com.ctoutweb.aet.core.entity.memoryCardGame.CardFace;
 import com.ctoutweb.aet.core.entity.memoryCardGame.GameLevel;
 import com.ctoutweb.aet.core.entity.memoryCardGame.ParameterState;
 import com.ctoutweb.aet.core.entity.memoryCardGame.impl.BornRangeImpl;
-import com.ctoutweb.aet.core.usecase.memoryCardGame.boundary.IGenerateNewGameRequest;
-import com.ctoutweb.aet.core.usecase.memoryCardGame.port.IGenerateNewGameGateway;
+import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.GenerateNewMemoryCardGameUseCase;
+import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameRequest;
+import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.port.IGenerateNewGameGateway;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static com.ctoutweb.aet.core.usecase.memoryCardGame.gameParameter.GameData.*;
+import static com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.gameParameter.GameData.*;
 
 public class GeneratedNewMemoryGameUseCaseTest {
   @Mock
@@ -42,8 +43,8 @@ public class GeneratedNewMemoryGameUseCaseTest {
      */
     IGenerateNewGameRequest gameLevelRequest = generateNewGameRequest(GameLevel.EASY, ParameterState.RANDOM);
     GenerateNewMemoryCardGameUseCase.Input input = new GenerateNewMemoryCardGameUseCase.Input(gameLevelRequest);
-    Mockito.when(portMemoryCardService.getAllAvailableCardPaths(CardFace.BACK_FACE)).thenReturn(new String[] {"bb", "aa", "cc", "dd"});
-    Mockito.when(portMemoryCardService.getAllAvailableCardPaths(CardFace.FRONT_FACE)).thenReturn(new String[] {"a", "b", "c", "d", "e", "f", "g"});
+    Mockito.when(portMemoryCardService.getAvailableCardName(CardFace.BACK_FACE)).thenReturn(new String[] {"bb", "aa", "cc", "dd"});
+    Mockito.when(portMemoryCardService.getAvailableCardName(CardFace.FRONT_FACE)).thenReturn(new String[] {"a", "b", "c", "d", "e", "f", "g"});
 
     /**
      * when
@@ -84,12 +85,12 @@ public class GeneratedNewMemoryGameUseCaseTest {
     Assertions.assertTrue(cardToFindIngGameList.size() == expectedCardToFindQuantity);
 
     // Vérification que toute les cartes a trouvers ont la bonne image de face
-    var expectedImage = data.getCardToFindInGame().cardImage().getCardFrontImagePath();
-    cardToFindIngGameList.forEach(card-> Assertions.assertTrue(card.cardImages().getCardFrontImagePath().equalsIgnoreCase(expectedImage)));
+    var expectedImage = data.getCardToFindInGame().cardImage().getImageFrontName();
+    cardToFindIngGameList.forEach(card-> Assertions.assertTrue(card.cardImages().getImageFrontName().equalsIgnoreCase(expectedImage)));
 
     // Vérification du text du jeu
     var gameText = data.getGameTextInformation();
-    Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation());
+    Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation().presentationText());
     Assertions.assertEquals(GAME_LOOSE_TEXT, gameText.getGameLostText());
     Assertions.assertEquals(GAME_VICTORY_GAME, gameText.getGameVictoryText());
     Assertions.assertEquals(CONGRATULATION_WORDS, gameText.getCongratulationWords());
@@ -108,8 +109,8 @@ public class GeneratedNewMemoryGameUseCaseTest {
      */
     IGenerateNewGameRequest gameLevelRequest = generateNewGameRequest(GameLevel.EASY, ParameterState.FIX);
     GenerateNewMemoryCardGameUseCase.Input input = new GenerateNewMemoryCardGameUseCase.Input(gameLevelRequest);
-    Mockito.when(portMemoryCardService.getAllAvailableCardPaths(CardFace.BACK_FACE)).thenReturn(new String[] {"bb", "aa", "cc", "dd"});
-    Mockito.when(portMemoryCardService.getAllAvailableCardPaths(CardFace.FRONT_FACE)).thenReturn(new String[] {"a", "b", "c", "d", "e", "f", "g"});
+    Mockito.when(portMemoryCardService.getAvailableCardName(CardFace.BACK_FACE)).thenReturn(new String[] {"bb", "aa", "cc", "dd"});
+    Mockito.when(portMemoryCardService.getAvailableCardName(CardFace.FRONT_FACE)).thenReturn(new String[] {"a", "b", "c", "d", "e", "f", "g"});
 
     /**
      * when
@@ -150,12 +151,12 @@ public class GeneratedNewMemoryGameUseCaseTest {
     Assertions.assertTrue(cardToFindIngGameList.size() == expectedCardToFindQuantity);
 
     // Vérification que toute les cartes a trouvers ont la bonne image de face
-    var expectedImage = data.getCardToFindInGame().cardImage().getCardFrontImagePath();
-    cardToFindIngGameList.forEach(card-> Assertions.assertTrue(card.cardImages().getCardFrontImagePath().equalsIgnoreCase(expectedImage)));
+    var expectedImage = data.getCardToFindInGame().cardImage().getImageFrontName();
+    cardToFindIngGameList.forEach(card-> Assertions.assertTrue(card.cardImages().getImageFrontName().equalsIgnoreCase(expectedImage)));
 
     // Vérification du text du jeu
     var gameText = data.getGameTextInformation();
-    Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation());
+    Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation().presentationText());
     Assertions.assertEquals(GAME_LOOSE_TEXT, gameText.getGameLostText());
     Assertions.assertEquals(GAME_VICTORY_GAME, gameText.getGameVictoryText());
     Assertions.assertEquals(CONGRATULATION_WORDS, gameText.getCongratulationWords());
@@ -171,8 +172,8 @@ public class GeneratedNewMemoryGameUseCaseTest {
      */
     IGenerateNewGameRequest gameLevelRequest = generateNewGameRequest(GameLevel.MEDIUM, ParameterState.RANDOM);
     GenerateNewMemoryCardGameUseCase.Input input = new GenerateNewMemoryCardGameUseCase.Input(gameLevelRequest);
-    Mockito.when(portMemoryCardService.getAllAvailableCardPaths(CardFace.BACK_FACE)).thenReturn(new String[] {"bb", "aa", "cc", "dd"});
-    Mockito.when(portMemoryCardService.getAllAvailableCardPaths(CardFace.FRONT_FACE)).thenReturn(new String[] {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"});
+    Mockito.when(portMemoryCardService.getAvailableCardName(CardFace.BACK_FACE)).thenReturn(new String[] {"bb", "aa", "cc", "dd"});
+    Mockito.when(portMemoryCardService.getAvailableCardName(CardFace.FRONT_FACE)).thenReturn(new String[] {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"});
 
     /**
      * when
@@ -213,12 +214,12 @@ public class GeneratedNewMemoryGameUseCaseTest {
     Assertions.assertTrue(cardToFindIngGameList.size() == expectedCardToFindQuantity);
 
     // Vérification que toute les cartes a trouvers ont la bonne image de face
-    var expectedImage = data.getCardToFindInGame().cardImage().getCardFrontImagePath();
-    cardToFindIngGameList.forEach(card-> Assertions.assertTrue(card.cardImages().getCardFrontImagePath().equalsIgnoreCase(expectedImage)));
+    var expectedImage = data.getCardToFindInGame().cardImage().getImageFrontName();
+    cardToFindIngGameList.forEach(card-> Assertions.assertTrue(card.cardImages().getImageFrontName().equalsIgnoreCase(expectedImage)));
 
     // Vérification du text du jeu
     var gameText = data.getGameTextInformation();
-    Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation());
+    Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation().presentationText());
     Assertions.assertEquals(GAME_LOOSE_TEXT, gameText.getGameLostText());
     Assertions.assertEquals(GAME_VICTORY_GAME, gameText.getGameVictoryText());
     Assertions.assertEquals(CONGRATULATION_WORDS, gameText.getCongratulationWords());
@@ -236,8 +237,8 @@ public class GeneratedNewMemoryGameUseCaseTest {
      */
     IGenerateNewGameRequest gameLevelRequest = generateNewGameRequest(GameLevel.MEDIUM, ParameterState.FIX);
     GenerateNewMemoryCardGameUseCase.Input input = new GenerateNewMemoryCardGameUseCase.Input(gameLevelRequest);
-    Mockito.when(portMemoryCardService.getAllAvailableCardPaths(CardFace.BACK_FACE)).thenReturn(new String[] {"bb", "aa", "cc", "dd"});
-    Mockito.when(portMemoryCardService.getAllAvailableCardPaths(CardFace.FRONT_FACE)).thenReturn(new String[] {"a", "b", "c", "d", "e", "f", "g", "v", "n"});
+    Mockito.when(portMemoryCardService.getAvailableCardName(CardFace.BACK_FACE)).thenReturn(new String[] {"bb", "aa", "cc", "dd"});
+    Mockito.when(portMemoryCardService.getAvailableCardName(CardFace.FRONT_FACE)).thenReturn(new String[] {"a", "b", "c", "d", "e", "f", "g", "v", "n"});
 
     /**
      * when
@@ -278,12 +279,12 @@ public class GeneratedNewMemoryGameUseCaseTest {
     Assertions.assertTrue(cardToFindIngGameList.size() == expectedCardToFindQuantity);
 
     // Vérification que toute les cartes a trouvers ont la bonne image de face
-    var expectedImage = data.getCardToFindInGame().cardImage().getCardFrontImagePath();
-    cardToFindIngGameList.forEach(card-> Assertions.assertTrue(card.cardImages().getCardFrontImagePath().equalsIgnoreCase(expectedImage)));
+    var expectedImage = data.getCardToFindInGame().cardImage().getImageFrontName();
+    cardToFindIngGameList.forEach(card-> Assertions.assertTrue(card.cardImages().getImageFrontName().equalsIgnoreCase(expectedImage)));
 
     // Vérification du text du jeu
     var gameText = data.getGameTextInformation();
-    Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation());
+    Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation().presentationText());
     Assertions.assertEquals(GAME_LOOSE_TEXT, gameText.getGameLostText());
     Assertions.assertEquals(GAME_VICTORY_GAME, gameText.getGameVictoryText());
     Assertions.assertEquals(CONGRATULATION_WORDS, gameText.getCongratulationWords());
@@ -299,8 +300,8 @@ public class GeneratedNewMemoryGameUseCaseTest {
      */
     IGenerateNewGameRequest gameLevelRequest = generateNewGameRequest(GameLevel.DIFFICULT, ParameterState.RANDOM);
     GenerateNewMemoryCardGameUseCase.Input input = new GenerateNewMemoryCardGameUseCase.Input(gameLevelRequest);
-    Mockito.when(portMemoryCardService.getAllAvailableCardPaths(CardFace.BACK_FACE)).thenReturn(new String[] {"bb", "aa", "cc", "dd"});
-    Mockito.when(portMemoryCardService.getAllAvailableCardPaths(CardFace.FRONT_FACE)).thenReturn(new String[] {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"});
+    Mockito.when(portMemoryCardService.getAvailableCardName(CardFace.BACK_FACE)).thenReturn(new String[] {"bb", "aa", "cc", "dd"});
+    Mockito.when(portMemoryCardService.getAvailableCardName(CardFace.FRONT_FACE)).thenReturn(new String[] {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"});
 
     /**
      * when
@@ -341,12 +342,12 @@ public class GeneratedNewMemoryGameUseCaseTest {
     Assertions.assertTrue(cardToFindIngGameList.size() == expectedCardToFindQuantity);
 
     // Vérification que toute les cartes a trouvers ont la bonne image de face
-    var expectedImage = data.getCardToFindInGame().cardImage().getCardFrontImagePath();
-    cardToFindIngGameList.forEach(card-> Assertions.assertTrue(card.cardImages().getCardFrontImagePath().equalsIgnoreCase(expectedImage)));
+    var expectedImage = data.getCardToFindInGame().cardImage().getImageFrontName();
+    cardToFindIngGameList.forEach(card-> Assertions.assertTrue(card.cardImages().getImageFrontName().equalsIgnoreCase(expectedImage)));
 
     // Vérification du text du jeu
     var gameText = data.getGameTextInformation();
-    Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation());
+    Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation().presentationText());
     Assertions.assertEquals(GAME_LOOSE_TEXT, gameText.getGameLostText());
     Assertions.assertEquals(GAME_VICTORY_GAME, gameText.getGameVictoryText());
     Assertions.assertEquals(CONGRATULATION_WORDS, gameText.getCongratulationWords());
@@ -362,8 +363,8 @@ public class GeneratedNewMemoryGameUseCaseTest {
      */
     IGenerateNewGameRequest gameLevelRequest = generateNewGameRequest(GameLevel.DIFFICULT, ParameterState.FIX);
     GenerateNewMemoryCardGameUseCase.Input input = new GenerateNewMemoryCardGameUseCase.Input(gameLevelRequest);
-    Mockito.when(portMemoryCardService.getAllAvailableCardPaths(CardFace.BACK_FACE)).thenReturn(new String[] {"bb", "aa", "cc", "dd"});
-    Mockito.when(portMemoryCardService.getAllAvailableCardPaths(CardFace.FRONT_FACE)).thenReturn(new String[] {"a", "b", "c", "d", "e", "f", "g", "v", "n"});
+    Mockito.when(portMemoryCardService.getAvailableCardName(CardFace.BACK_FACE)).thenReturn(new String[] {"bb", "aa", "cc", "dd"});
+    Mockito.when(portMemoryCardService.getAvailableCardName(CardFace.FRONT_FACE)).thenReturn(new String[] {"a", "b", "c", "d", "e", "f", "g", "v", "n"});
 
     /**
      * when
@@ -404,12 +405,12 @@ public class GeneratedNewMemoryGameUseCaseTest {
     Assertions.assertTrue(cardToFindIngGameList.size() == expectedCardToFindQuantity);
 
     // Vérification que toute les cartes a trouvers ont la bonne image de face
-    var expectedImage = data.getCardToFindInGame().cardImage().getCardFrontImagePath();
-    cardToFindIngGameList.forEach(card-> Assertions.assertTrue(card.cardImages().getCardFrontImagePath().equalsIgnoreCase(expectedImage)));
+    var expectedImage = data.getCardToFindInGame().cardImage().getImageFrontName();
+    cardToFindIngGameList.forEach(card-> Assertions.assertTrue(card.cardImages().getImageFrontName().equalsIgnoreCase(expectedImage)));
 
     // Vérification du text du jeu
     var gameText = data.getGameTextInformation();
-    Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation());
+    Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation().presentationText());
     Assertions.assertEquals(GAME_LOOSE_TEXT, gameText.getGameLostText());
     Assertions.assertEquals(GAME_VICTORY_GAME, gameText.getGameVictoryText());
     Assertions.assertEquals(CONGRATULATION_WORDS, gameText.getCongratulationWords());

@@ -1,7 +1,7 @@
 package com.ctoutweb.aet.core.entity.memoryCardGame;
 
 import com.ctoutweb.aet.core.entity.gameText.IGameTextInformation;
-import com.ctoutweb.aet.core.usecase.memoryCardGame.boundary.IGenerateNewGameResponse;
+import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameResponse;
 
 /**
  * Utilisé pour mettre a jour les données lors de la création d'un jeu

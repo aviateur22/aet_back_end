@@ -2,14 +2,14 @@ package com.ctoutweb.aet.core.entity.memoryCardGame.impl;
 
 import com.ctoutweb.aet.core.entity.memoryCardGame.ICardImage;
 
-public record CardImageImpl(String cardFrontImagePath, String cardBackImagePath) implements ICardImage {
+public record CardImageImpl(String imageFrontName, String imageBackName) implements ICardImage {
   @Override
-  public String getCardFrontImagePath() {
-    return cardFrontImagePath;
+  public String getImageFrontName() {
+    return imageFrontName;
   }
 
   @Override
-  public String getCardBackImagePath() {
-    return cardBackImagePath;
+  public String getImageBackName() {
+    return imageBackName;
   }
 }

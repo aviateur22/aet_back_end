@@ -1,4 +1,4 @@
 package com.ctoutweb.aet.infra.model.memoryCardGame;
 
-public record Card(CardImage cardImage, boolean isCardToFind) {
+public record Card(int id, CardImage cardImage, boolean isCardToFind) {
 }

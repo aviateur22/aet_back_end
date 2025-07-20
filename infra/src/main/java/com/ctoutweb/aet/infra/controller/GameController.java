@@ -10,11 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.ctoutweb.aet.infra.provider.InfraFactory.INFRA_MEMORY_CARD_INSTANCE_PROVIDER;
 
 @RestController
+@RequestMapping("${api.version.path}/games")
 public class GameController {
   private static final Logger LOGGER = LogManager.getLogger();
   private final IMemoryCardGameService memoryCardGameService;
@@ -23,7 +25,7 @@ public class GameController {
     this.memoryCardGameService = memoryCardGameService;
   }
 
-  @GetMapping("card-game/level/{gameLevel}/generate-random-memory-card-game")
+  @GetMapping("/card-game/level/{gameLevel}/generate-random-memory-card-game")
   public ResponseEntity<GenerateMemoryCardGameResponseDto> generateRandomMemoryCardGame(@PathVariable String gameLevel) {
     final GameParameter gameParameter = GameParameter.RANDOM;
     var dto = INFRA_MEMORY_CARD_INSTANCE_PROVIDER.provideMemoryCardGameRequestDto(GameLevel.loadGameLevel(gameLevel), gameParameter);

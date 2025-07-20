@@ -1,16 +1,13 @@
 package com.ctoutweb.aet.infra.provider.memoryCardGame;
 
 import com.ctoutweb.aet.core.entity.memoryCardGame.ParameterState;
-import com.ctoutweb.aet.core.usecase.memoryCardGame.boundary.IGenerateNewGameRequest;
+import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameRequest;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameResponseDto;
-import com.ctoutweb.aet.infra.model.IImageData;
 import com.ctoutweb.aet.infra.model.gameText.GamePresentation;
 import com.ctoutweb.aet.infra.model.memoryCardGame.*;
 
 public interface IMemoryCardInstanceProvider {
-  IImageData providerImageData(String imagePath, String imageName);
-
   GenerateMemoryCardGameRequestDto provideMemoryCardGameRequestDto(GameLevel level, GameParameter parameter) ;
   GenerateMemoryCardGameResponseDto provideMemoryCardGameResponseDto(
           IGameTextInformation gameTextInformation,
@@ -37,7 +34,7 @@ public interface IMemoryCardInstanceProvider {
 
   CardToFind provideCardToFind(String cardTextExplanation, CardImage cardImage);
 
-  Card provideCard(CardImage cardImage, boolean isCardToFind);
+  Card provideCard(int id, CardImage cardImage, boolean isCardToFind);
 }
 
 
