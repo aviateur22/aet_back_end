@@ -3,6 +3,7 @@ package com.ctoutweb.aet.infra.service;
 import com.ctoutweb.aet.core.exception.ImageException;
 import com.ctoutweb.aet.infra.adapter.memoryCardGame.MemoryCardGameAdapter;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
+import com.ctoutweb.aet.infra.exception.CardException;
 import com.ctoutweb.aet.infra.model.image.ImageDataImpl;
 import com.ctoutweb.aet.infra.model.memoryCardGame.Card;
 import com.ctoutweb.aet.infra.model.memoryCardGame.GameLevel;
@@ -11,6 +12,9 @@ import com.ctoutweb.aet.infra.model.memoryCardGame.ImageFace;
 import com.ctoutweb.aet.infra.repository.IMemoryCardGameImageFaceRepository;
 import com.ctoutweb.aet.infra.repository.IMemoryCardGameImageFamilyRepository;
 import com.ctoutweb.aet.infra.repository.IMemoryCardGameImageRepository;
+import com.ctoutweb.aet.infra.repository.entity.ImageEntity;
+import com.ctoutweb.aet.infra.repository.entity.MemoryCardGameImageFaceEntity;
+import com.ctoutweb.aet.infra.repository.entity.MemoryCardGameImageFamilyEntity;
 import com.ctoutweb.aet.infra.service.gameService.memoryCardGameService.impl.MemoryCardGameServiceImpl;
 import com.ctoutweb.aet.infra.service.imageLoaderService.IImageLoaderService;
 import org.junit.jupiter.api.Assertions;
@@ -24,10 +28,14 @@ import org.mockito.MockitoAnnotations;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.gameParameter.GameData.*;
+import static com.ctoutweb.aet.infra.constant.memoryCardGame.MemoryCardGameConstant.BACK_IMAGE_FACE_ID;
+import static com.ctoutweb.aet.infra.constant.memoryCardGame.MemoryCardGameConstant.FRONT_IMAGE_FACE_ID;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class MemoryCadGameServiceImplTest {
@@ -66,15 +74,40 @@ public class MemoryCadGameServiceImplTest {
      */
     GenerateMemoryCardGameRequestDto dto = new GenerateMemoryCardGameRequestDto(gameLevel, gameParameter);
 
-    when(imageLoaderService.loadAllMemoryCardImages(ImageFace.FRONT_FACE))
-            .thenReturn(
-                    List.of(
-                            new ImageDataImpl("path/image/bb.png", "bb.png"),
-                            new ImageDataImpl("path/image/dd.png", "dd.png")));
+    // Mock une famille de carte
+    var cardFamilyMock = new MemoryCardGameImageFamilyEntity();
+    cardFamilyMock.setFamilyName("hiboux");
+    when(memoryCardGameImageFamilyRepository.findAll()).thenReturn(List.of(cardFamilyMock));
 
-    when(imageLoaderService.loadAllMemoryCardImages(ImageFace.BACK_FACE))
-            .thenReturn(
-                    List.of(new ImageDataImpl("path/image/back1.png", "path/image/back1.png")));
+    // Mock face MemoryCardGameImageFaceEntity
+    var frontCardFaceMock = new MemoryCardGameImageFaceEntity();
+    frontCardFaceMock.setId(1);
+    when(memoryCardGameImageFaceRepository.findById(FRONT_IMAGE_FACE_ID)).thenReturn(Optional.of(frontCardFaceMock));
+
+    // Mock face arriere MemoryCardGameImageFaceEntity
+    var backCardFaceMock = new MemoryCardGameImageFaceEntity();
+    backCardFaceMock.setId(2);
+    when(memoryCardGameImageFaceRepository.findById(BACK_IMAGE_FACE_ID)).thenReturn(Optional.of(backCardFaceMock));
+
+    // Mock image
+   var imageMock1 = new ImageEntity();
+   imageMock1.setImagePath("path/image/bb.png");
+   imageMock1.setRandomName("path/image/dd.png");
+
+   var imageMock2 = new ImageEntity();
+   imageMock2.setImagePath("abv");
+   imageMock2.setRandomName("afg");
+
+   when(memoryCardGameImageRepository.findImageByFaceAndFamilyList(any(), any())).thenReturn(
+                    List.of(imageMock1, imageMock2));
+
+   // Mock image Face arrire
+   var backImageMock = new ImageEntity();
+   backImageMock.setImagePath("arriere");
+   backImageMock.setRandomName("fjfjfj");
+
+   // Mock récupération carte arriee
+   when(this.memoryCardGameImageRepository.findImageByFaceList(any())).thenReturn(List.of(backImageMock));
 
     /**
      * when
@@ -112,50 +145,95 @@ public class MemoryCadGameServiceImplTest {
 
   @ParameterizedTest
   @MethodSource("provideRequestDtoParameter")
-  void generateMemoryCardGameData_should_throw_when_no_front_images_avail(GameParameter gameParameter, GameLevel gameLevel) throws IOException {
+  void generateMemoryCardGameData_should_throw_when_no_images_family_avail(GameParameter gameParameter, GameLevel gameLevel) throws IOException {
     /**
      * given
      */
-    GenerateMemoryCardGameRequestDto dto = new GenerateMemoryCardGameRequestDto(gameLevel, gameParameter);
+    // Mock face arriere MemoryCardGameImageFaceEntity
+    var backCardFaceMock = new MemoryCardGameImageFaceEntity();
+    backCardFaceMock.setId(2);
+    when(memoryCardGameImageFaceRepository.findById(BACK_IMAGE_FACE_ID))
+            .thenReturn(Optional.of(backCardFaceMock));
 
-    when(imageLoaderService.loadAllMemoryCardImages(ImageFace.FRONT_FACE))
+    when(memoryCardGameImageRepository.findImageByFaceAndFamilyList(any(), any()))
             .thenReturn(List.of());
 
-    when(imageLoaderService.loadAllMemoryCardImages(ImageFace.BACK_FACE))
-            .thenReturn(
-                    List.of(new ImageDataImpl("path/image/back1.png", "path/image/back1.png")));
-
+    GenerateMemoryCardGameRequestDto dto = new GenerateMemoryCardGameRequestDto(gameLevel, gameParameter);
     /**
      * then
      */
-    Exception exception =  Assertions.assertThrows(ImageException.class, ()->memoryCardGameService.generateMemoryCardGameData(dto));
-    Assertions.assertEquals("Aucune image de disponible pour créer la face avant de la carte", exception.getMessage());
+    Exception exception =  Assertions.assertThrows(CardException.class, () -> memoryCardGameService.generateMemoryCardGameData(dto));
+    Assertions.assertEquals("Il n'y a pas de famille de disponible", exception.getMessage());
   }
 
   @ParameterizedTest
   @MethodSource("provideRequestDtoParameter")
-  void generateMemoryCardGameData_should_throw_when_no_back_images_avail(GameParameter gameParameter, GameLevel gameLevel) throws IOException {
+  void generateMemoryCardGameData_should_throw_when_no_back_images_family_avail(GameParameter gameParameter, GameLevel gameLevel) throws IOException {
     /**
      * given
      */
     GenerateMemoryCardGameRequestDto dto = new GenerateMemoryCardGameRequestDto(gameLevel, gameParameter);
 
-    when(imageLoaderService.loadAllMemoryCardImages(ImageFace.FRONT_FACE))
-            .thenReturn(List.of(
-                    new ImageDataImpl("path/image/bb.png", "bb.png"),
-                    new ImageDataImpl("path/image/dd.png", "dd.png")));
+    // Mock une famille de carte
+    var cardFamilyMock = new MemoryCardGameImageFamilyEntity();
+    cardFamilyMock.setFamilyName("hiboux");
+    when(memoryCardGameImageFamilyRepository.findAll()).thenReturn(List.of(cardFamilyMock));
 
-    when(imageLoaderService.loadAllMemoryCardImages(ImageFace.BACK_FACE))
-            .thenReturn(
-                    List.of());
+    // Mock face MemoryCardGameImageFaceEntity
+    var frontCardFaceMock = new MemoryCardGameImageFaceEntity();
+    frontCardFaceMock.setId(1);
+    when(memoryCardGameImageFaceRepository.findById(FRONT_IMAGE_FACE_ID)).thenReturn(Optional.of(frontCardFaceMock));
+
+    // Mock image
+    var imageMock1 = new ImageEntity();
+    imageMock1.setImagePath("path/image/bb.png");
+    imageMock1.setRandomName("path/image/dd.png");
+
+    var imageMock2 = new ImageEntity();
+    imageMock2.setImagePath("abv");
+    imageMock2.setRandomName("afg");
+
+    when(memoryCardGameImageRepository.findImageByFaceAndFamilyList(any(), any())).thenReturn(
+            List.of(imageMock1, imageMock2));
+
+    // Mock face arriere MemoryCardGameImageFaceEntity
+    when(memoryCardGameImageFaceRepository.findById(BACK_IMAGE_FACE_ID)).thenReturn(Optional.empty());
+
 
     /**
      * then
      */
-    Exception exception =  Assertions.assertThrows(ImageException.class, ()->memoryCardGameService.generateMemoryCardGameData(dto));
-    Assertions.assertEquals("Aucune image de disponible pour créer la face arriere de la carte", exception.getMessage());
+    Exception exception =  Assertions.assertThrows(CardException.class, ()->memoryCardGameService.generateMemoryCardGameData(dto));
+    Assertions.assertEquals("Il n'y a pas de famille de disponible", exception.getMessage());
   }
 
+  @ParameterizedTest
+  @MethodSource("provideRequestDtoParameter")
+  void generateMemoryCardGameData_should_throw_when_no_images_avail(GameParameter gameParameter, GameLevel gameLevel) throws IOException {
+    /**
+     * given
+     */
+    GenerateMemoryCardGameRequestDto dto = new GenerateMemoryCardGameRequestDto(gameLevel, gameParameter);
+
+    // Mock une famille de carte
+    var cardFamilyMock = new MemoryCardGameImageFamilyEntity();
+    cardFamilyMock.setFamilyName("hiboux");
+    when(memoryCardGameImageFamilyRepository.findAll()).thenReturn(List.of(cardFamilyMock));
+
+    // Mock face MemoryCardGameImageFaceEntity
+    var frontCardFaceMock = new MemoryCardGameImageFaceEntity();
+    frontCardFaceMock.setId(1);
+    when(memoryCardGameImageFaceRepository.findById(FRONT_IMAGE_FACE_ID)).thenReturn(Optional.of(frontCardFaceMock));
+
+    when(memoryCardGameImageRepository.findImageByFaceAndFamilyList(any(), any())).thenReturn(
+            List.of());
+
+    /**
+     * then
+     */
+    Exception exception =  Assertions.assertThrows(ImageException.class, () -> memoryCardGameService.generateMemoryCardGameData(dto));
+    Assertions.assertEquals("Aucune image de disponible pour créer la face avant de la carte", exception.getMessage());
+  }
   private static Stream<Arguments> provideRequestDtoParameter() {
     return Stream.of(
             Arguments.of(GameParameter.RANDOM, GameLevel.EASY),

@@ -7,6 +7,7 @@ import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerat
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.port.IGenerateNewGameGateway;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameResponseDto;
+import com.ctoutweb.aet.infra.exception.CardException;
 import com.ctoutweb.aet.infra.exception.ImageException;
 import com.ctoutweb.aet.infra.mapper.InfraMapper;
 import com.ctoutweb.aet.infra.model.image.IImageData;
@@ -58,15 +59,10 @@ public class MemoryCardGameAdapter extends InfraMapper implements IGenerateNewGa
 
   @Override
   public String[] getAvailableCardName(CardFace cardFace) {
-    try {
-      MemoryCardGameImageFamilyEntity family = this.getRadomFamilyCard();
-      var images = this.getImageData(cardFace, family);
+    MemoryCardGameImageFamilyEntity family = this.getRadomFamilyCard();
+    var images = this.getImageData(cardFace, family);
 
-      return images.stream().map(IImageData::getImageName).toArray(String[]::new);
-
-    } catch (Exception exception) {
-      throw new ImageException("Il y a eut une erreur de chargement des images");
-    }
+    return images.stream().map(IImageData::getImageName).toArray(String[]::new);
   }
 
   /**
@@ -89,7 +85,9 @@ public class MemoryCardGameAdapter extends InfraMapper implements IGenerateNewGa
   private List<IImageData> getImageData(CardFace cardFace, MemoryCardGameImageFamilyEntity familyCard) {
     return switch (cardFace) {
       case FRONT_FACE ->  {
-        var cardFaceEntity = memoryCardGameImageFaceRepository.findById(FRONT_IMAGE_FACE_ID).orElseThrow();
+        var cardFaceEntity = memoryCardGameImageFaceRepository
+                .findById(FRONT_IMAGE_FACE_ID)
+                .orElseThrow(() -> new CardException("Il n'y a pas de famille de disponible"));
         var images = this.memoryCardGameImageRepository.findImageByFaceAndFamilyList(cardFaceEntity, familyCard)
                 .stream()
                 .map(image-> IMAGE_INSTANCE_PROVIDER.providerImageData(image.getImagePath(), image.getRandomName()))
@@ -97,7 +95,9 @@ public class MemoryCardGameAdapter extends InfraMapper implements IGenerateNewGa
         yield images;
       }
       case BACK_FACE -> {
-        var cardFaceEntity = memoryCardGameImageFaceRepository.findById(BACK_IMAGE_FACE_ID).orElseThrow();
+        var cardFaceEntity = memoryCardGameImageFaceRepository
+                .findById(BACK_IMAGE_FACE_ID)
+                .orElseThrow(() -> new CardException("Il n'y a pas de famille de disponible"));
         var images = this.memoryCardGameImageRepository.findImageByFaceList(cardFaceEntity)
                 .stream()
                 .map(image-> IMAGE_INSTANCE_PROVIDER.providerImageData(image.getImagePath(), image.getRandomName()))

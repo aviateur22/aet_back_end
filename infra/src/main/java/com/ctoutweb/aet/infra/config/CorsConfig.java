@@ -40,10 +40,10 @@ public class CorsConfig {
 
     // Configuration Cors pour les jeux
     CorsConfiguration image = new CorsConfiguration();
-    memoryGameCors.setAllowCredentials(true);
-    memoryGameCors.setAllowedOrigins(Arrays.asList(corsDomains.split(",")));
-    memoryGameCors.setAllowedMethods(Arrays.asList("GET", "POST", "PUT"));
-    memoryGameCors.setAllowedHeaders(Arrays.asList("Content-Type"));
+    image.setAllowCredentials(true);
+    image.setAllowedOrigins(Arrays.asList(corsDomains.split(",")));
+    image.setAllowedMethods(Arrays.asList("GET", "POST", "PUT"));
+    image.setAllowedHeaders(Arrays.asList("Content-Type"));
     source.registerCorsConfiguration(apiPathConfig.getPath(ApiPathAvail.IMAGES), image);
 
     return source;
