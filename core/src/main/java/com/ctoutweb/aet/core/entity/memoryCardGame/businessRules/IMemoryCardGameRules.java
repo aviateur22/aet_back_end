@@ -1,4 +1,4 @@
-package com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.businessRules;
+package com.ctoutweb.aet.core.entity.memoryCardGame.businessRules;
 
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameResponse;
 public interface IMemoryCardGameRules {

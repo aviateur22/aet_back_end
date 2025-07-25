@@ -1,15 +1,18 @@
 package com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.provider.impl;
 
-import com.ctoutweb.aet.core.entity.gameText.GamePresentation;
-import com.ctoutweb.aet.core.entity.gameText.GameTextInformation;
+import com.ctoutweb.aet.core.entity.gameText.ILoadGameEndLevelParameter;
+import com.ctoutweb.aet.core.entity.IMinAndMax;
+import com.ctoutweb.aet.core.entity.gameText.IGameTextInformation;
+import com.ctoutweb.aet.core.entity.gameText.IGameTextPresentation;
+import com.ctoutweb.aet.core.entity.gameText.gameEnd.EndErrorLevel;
+import com.ctoutweb.aet.core.entity.gameText.gameEnd.IGameEndParameterByLevel;
+import com.ctoutweb.aet.core.entity.memoryCardGame.impl.gameTextImpl.*;
+import com.ctoutweb.aet.core.entity.gameText.gameEnd.IGameEndText;
 import com.ctoutweb.aet.core.entity.memoryCardGame.*;
-import com.ctoutweb.aet.core.entity.memoryCardGame.impl.GameCardDataImpl;
-import com.ctoutweb.aet.core.entity.memoryCardGame.impl.LevelParameterImpl;
+import com.ctoutweb.aet.core.entity.memoryCardGame.impl.*;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.GenerateNewMemoryCardGameUseCase;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameRequest;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.impl.MemoryCardDataImpl;
-import com.ctoutweb.aet.core.entity.memoryCardGame.impl.BornRangeImpl;
-import com.ctoutweb.aet.core.entity.memoryCardGame.impl.CardImageImpl;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameResponse;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.provider.IDomainModelInstanceProvider;
 
@@ -41,9 +44,15 @@ public class DomainModelInstanceProviderImpl implements IDomainModelInstanceProv
   }
 
   @Override
-  public IBornRange provideBornRangeImpl(int min, int max) {
-    return new BornRangeImpl(min, max);
+  public ILoadGameEndLevelParameter provideEndLevelParameter() {
+    return new EndLevelParameterImpl();
   }
+
+  @Override
+  public <T> IMinAndMax provideMinAndMaxImpl(T min, T max) {
+    return new MinAndMaxImpl(min, max);
+  }
+
 
   @Override
   public ICardImage provideCardImageImpl(String cardFrontImagePath, String cardBackImagePath) {
@@ -59,36 +68,46 @@ public class DomainModelInstanceProviderImpl implements IDomainModelInstanceProv
   }
 
   @Override
-  public GamePresentation provideGamePresentation(String gameTitle, String presentationText) {
-    return new GamePresentation(gameTitle, presentationText);
+  public GamePresentationImpl provideGamePresentation(String gameTitle, String presentationText) {
+    return new GamePresentationImpl(gameTitle, presentationText);
   }
 
   @Override
   public GenerateNewMemoryCardGameUseCase.Output provideOutput(IGenerateNewGameResponse memmoryCardGameData) {
     return new GenerateNewMemoryCardGameUseCase.Output(memmoryCardGameData);
   }
-
   @Override
   public IGameCardData provideGameCardData() {
     return new GameCardDataImpl();
   }
 
-
   @Override
-  public GameTextInformation provideGameTextInformation(
+  public IGameTextInformation provideGameTextInformation(
           String[] congratulationWords,
           String[] loosingWords,
-          String gameLostText,
-          String gameVictoryText,
-          GamePresentation gamePresentation
+         IGameTextPresentation gamePresentation,
+          IGameEndParameterByLevel[] gameEndParameterByLevels
   ) {
-    return new GameTextInformation(
+    return new GameTextInformationImpl(
            congratulationWords,
            loosingWords,
-            gameLostText,
-            gameVictoryText,
-            gamePresentation
+            gamePresentation,
+            gameEndParameterByLevels
     );
+  }
+
+  @Override
+  public IGameEndText provideEndText(String endTitle, String endGameText) {
+    return new EndTextImpl(endTitle, endGameText);
+  }
+
+  @Override
+  public IGameEndParameterByLevel provideGameEndParameterByLevel(
+          int minErrorLevel,
+          int maxErrorLevel,
+          EndErrorLevel resultLevel,
+          IGameEndText gameEndText) {
+    return new GameEndParamterByLevelImpl(minErrorLevel, maxErrorLevel, resultLevel, gameEndText);
   }
 
   @Override

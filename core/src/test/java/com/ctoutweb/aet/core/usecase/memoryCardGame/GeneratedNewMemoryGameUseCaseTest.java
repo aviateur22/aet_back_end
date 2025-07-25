@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.gameParameter.GameData.*;
+import static com.ctoutweb.aet.core.paramter.memoryCardGameParameter.GameData.*;
 
 public class GeneratedNewMemoryGameUseCaseTest {
   @Mock

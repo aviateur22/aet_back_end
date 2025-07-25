@@ -1,8 +1,10 @@
-package com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.businessRules;
+package com.ctoutweb.aet.core.entity.memoryCardGame.businessRules;
 
+import com.ctoutweb.aet.core.entity.IMinAndMax;
+import com.ctoutweb.aet.core.entity.gameText.gameEnd.IGameEndParameterByLevel;
 import com.ctoutweb.aet.core.entity.memoryCardGame.*;
+import com.ctoutweb.aet.core.entity.memoryCardGame.impl.gameTextImpl.EndLevelParameterLoader;
 import com.ctoutweb.aet.core.exception.ImageException;
-import com.ctoutweb.aet.core.provider.CoreFactory;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.port.IGenerateNewGameGateway;
 import com.ctoutweb.aet.core.util.ArrayUtil;
 import com.ctoutweb.aet.core.util.NumberUtil;
@@ -12,7 +14,8 @@ import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerat
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.gameParameter.GameData.*;
+import static com.ctoutweb.aet.core.paramter.memoryCardGameParameter.GameData.*;
+import static com.ctoutweb.aet.core.provider.CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER;
 
 public class MemoryCardGameRules extends RuleBase {
   private final IGenerateNewGameGateway portMemoryCardService;
@@ -33,7 +36,7 @@ public class MemoryCardGameRules extends RuleBase {
 
   @Override
   public MemoryCardGameRules initialize() {
-    this.memoryCardSetter = CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideGameCardData();
+    this.memoryCardSetter = MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideGameCardData();
     this.selectedBackImagePath = "";
 
     if(this.frontImagePathAvailableList != null)
@@ -75,16 +78,16 @@ public class MemoryCardGameRules extends RuleBase {
               this.frontImagePathAvailableList,
               imageTofindPath,
               this.memoryCardSetter.getCardToFindQuantity()
-            )).map(image -> CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideImageSelect(image, true))
+            )).map(image -> MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideImageSelect(image, true))
             .toArray(ImageSelect[]::new);
 
     frontImagePathAvailableList = ArrayUtil.removeItemByItemValue(this.frontImagePathAvailableList, imageTofindPath);
 
     ArrayUtil.shuffle(this.frontImagePathAvailableList);
 
-    IBornRange cardsQuantityBorn = this.gameLevel.getLevelParameter().getCardsQuantityInGameBorn(parameterState);
+    IMinAndMax<Integer> cardsQuantityBorn = this.gameLevel.getLevelParameter().getCardsQuantityInGameBorn(parameterState);
 
-    short quantity = NumberUtil.generateRandomNumberBetweenMinAndMax(
+    var quantity = NumberUtil.generateRandomNumberBetweenMinAndMax(
             cardsQuantityBorn.getMin(),
             cardsQuantityBorn.getMax());
     AtomicInteger idCounter = new AtomicInteger(1);
@@ -92,7 +95,7 @@ public class MemoryCardGameRules extends RuleBase {
     ImageSelect[] randomImageFrontPathList = Arrays.stream(ArrayUtil.selectMultipleRandomItem(
             this.frontImagePathAvailableList,
             quantity - this.memoryCardSetter.getCardToFindQuantity()))
-            .map(image -> CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideImageSelect(image, false))
+            .map(image -> MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideImageSelect(image, false))
             .toArray(ImageSelect[]::new);
 
 
@@ -101,8 +104,8 @@ public class MemoryCardGameRules extends RuleBase {
     Card[] allGameCards = Arrays.stream(allGameFrontImagePathCards)
             .map(image -> {
               int id = idCounter.getAndIncrement();
-              var cardImage = CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideCardImageImpl(image.imagePath(), this.selectedBackImagePath);
-              return CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideCard(id, cardImage, image.isToFind());
+              var cardImage = MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideCardImageImpl(image.imagePath(), this.selectedBackImagePath);
+              return MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideCard(id, cardImage, image.isToFind());
             })
             .toArray(Card[]::new);
 
@@ -112,7 +115,7 @@ public class MemoryCardGameRules extends RuleBase {
     return this;
   }
   public IGenerateNewGameResponse getCardGameData() {
-    IGenerateNewGameResponse memoryCardData = CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideMemoryCardDataImpl(memoryCardSetter);
+    IGenerateNewGameResponse memoryCardData = MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideMemoryCardDataImpl(memoryCardSetter);
     return memoryCardData;
   }
 
@@ -129,14 +132,14 @@ public class MemoryCardGameRules extends RuleBase {
     var frontImageTofind = ArrayUtil.selectOneRandomItem(this.frontImagePathAvailableList);
 
     // Carte a trouver dans le jeu
-    ICardImage cardToFind = CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideCardImageImpl(frontImageTofind.getItem(), this.selectedBackImagePath);
+    ICardImage cardToFind = MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideCardImageImpl(frontImageTofind.getItem(), this.selectedBackImagePath);
     String imageTofindPath = frontImageTofind.getItem();
 
     // Text de presentation de la carte
     String cardToFindDescription = CARD_TO_FIND_PRESENTATION;
 
     // La carte à trouver
-    CardToFind cardTofindInGame = CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideCardToFind(cardToFind, cardToFindDescription);
+    CardToFind cardTofindInGame = MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideCardToFind(cardToFind, cardToFindDescription);
 
     memoryCardSetter.setCardToFindInGame(cardTofindInGame);
 
@@ -167,8 +170,8 @@ public class MemoryCardGameRules extends RuleBase {
   }
 
   private void calculateCardToFindQuantity() {
-    IBornRange cardToFindQuantityBorn = this.gameLevel.getLevelParameter().getCardsQuantityToFindBorn(parameterState);
-    short quantity = NumberUtil.generateRandomNumberBetweenMinAndMax(
+    IMinAndMax<Integer> cardToFindQuantityBorn = this.gameLevel.getLevelParameter().getCardsQuantityToFindBorn(parameterState);
+    var quantity = NumberUtil.generateRandomNumberBetweenMinAndMax(
             cardToFindQuantityBorn.getMin(),
             cardToFindQuantityBorn.getMax());
 
@@ -177,17 +180,29 @@ public class MemoryCardGameRules extends RuleBase {
   private void setTimeToObserveBeforeStart() {
     this.memoryCardSetter.setTimeToObserveBeforeStart(TIME_TO_OBSERVE_BEFORE_START);
   }
-  private void loadTextOfTheGame() {
-    var gameText = CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideGameTextInformation(
+
+  @Override
+  protected void loadTextOfTheGame() {
+    IGameEndParameterByLevel[] gameEndParameterByLevels = new IGameEndParameterByLevel[] {
+            EndLevelParameterLoader.EXCELLENT.getGameEndParameterByLevel(),
+            EndLevelParameterLoader.VERY_GOOD.getGameEndParameterByLevel(),
+            EndLevelParameterLoader.GOOD.getGameEndParameterByLevel(),
+            EndLevelParameterLoader.MEDUIM.getGameEndParameterByLevel(),
+            EndLevelParameterLoader.BAD.getGameEndParameterByLevel(),
+            EndLevelParameterLoader.VER_BAD.getGameEndParameterByLevel(),
+            EndLevelParameterLoader.LOOSE.getGameEndParameterByLevel()
+    };
+
+    var gameText = MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideGameTextInformation(
             CONGRATULATION_WORDS,
             LOOSING_WORDS,
-            GAME_LOOSE_TEXT,
-            GAME_VICTORY_GAME,
-            CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideGamePresentation(
+            MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER.provideGamePresentation(
                     GAME_TITLE,
                     GAME_TEXT_PRESENTATION
-            )
+            ),
+            gameEndParameterByLevels
     );
+
     this.memoryCardSetter.setGameTextInformation(gameText);
   }
 

@@ -3,8 +3,7 @@ package com.ctoutweb.aet.infra.provider.memoryCardGame;
 import com.ctoutweb.aet.core.entity.memoryCardGame.ParameterState;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameRequest;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
-import com.ctoutweb.aet.infra.model.gameText.GamePresentation;
-import com.ctoutweb.aet.infra.model.gameText.GameTextInformationImpl;
+import com.ctoutweb.aet.infra.model.gameText.*;
 import com.ctoutweb.aet.infra.model.memoryCardGame.adapter.GenerateNewGameRequestImpl;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameResponseDto;
 import com.ctoutweb.aet.infra.model.memoryCardGame.*;
@@ -21,9 +20,9 @@ public class MemoryCardInstanceProviderImpl implements IMemoryCardInstanceProvid
           CardToFind cardToFindInGame,
           Card[] cards,
           String gameLevel,
-          short timeToObserveBeforeStart,
-          short cardToFindQuantity,
-          short errorQuantity,
+          int timeToObserveBeforeStart,
+          int cardToFindQuantity,
+          int errorQuantity,
           int timeInSecToFinis
   ) {
     return new GenerateMemoryCardGameResponseDto(
@@ -52,11 +51,20 @@ public class MemoryCardInstanceProviderImpl implements IMemoryCardInstanceProvid
   public IGameTextInformation provideGameTextInformation(
           String[] congratulationWords,
           String[] loosingWords,
-          String gameLostText,
-          String gameVictoryText,
-          GamePresentation gamePresentation) {
+          GamePresentation gamePresentation,
+          GameEndParameterByLevel[] gameEndParameterByLevels) {
     return new GameTextInformationImpl(
-            congratulationWords, loosingWords, gameLostText, gameVictoryText, gamePresentation);
+            congratulationWords, loosingWords, gamePresentation, gameEndParameterByLevels);
+  }
+
+  @Override
+  public GameEndParameterByLevel provideGameEndParameterByLevel(int minError, int maxError, EndGameErrorLevel endResultLevel, EndGameText endGameText) {
+    return new GameEndParameterByLevel(minError, maxError, endResultLevel, endGameText);
+  }
+
+  @Override
+  public EndGameText provideEndGameText(String endTitle, String endGameText) {
+    return new EndGameText(endTitle, endGameText);
   }
 
   @Override

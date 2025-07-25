@@ -1,7 +1,12 @@
 package com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.provider;
 
-import com.ctoutweb.aet.core.entity.gameText.GamePresentation;
-import com.ctoutweb.aet.core.entity.gameText.GameTextInformation;
+import com.ctoutweb.aet.core.entity.gameText.ILoadGameEndLevelParameter;
+import com.ctoutweb.aet.core.entity.IMinAndMax;
+import com.ctoutweb.aet.core.entity.gameText.IGameTextInformation;
+import com.ctoutweb.aet.core.entity.gameText.IGameTextPresentation;
+import com.ctoutweb.aet.core.entity.gameText.gameEnd.EndErrorLevel;
+import com.ctoutweb.aet.core.entity.gameText.gameEnd.IGameEndParameterByLevel;
+import com.ctoutweb.aet.core.entity.gameText.gameEnd.IGameEndText;
 import com.ctoutweb.aet.core.entity.memoryCardGame.*;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.GenerateNewMemoryCardGameUseCase;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameRequest;
@@ -13,18 +18,28 @@ public interface IDomainModelInstanceProvider {
   IGameCardData provideGameCardData();
   IGenerateNewGameResponse provideMemoryCardDataImpl(IGameCardData generateNewGameResponseSetter);
   ILevelParameter provideLevelParameter(LevelType levelType);
-  IBornRange provideBornRangeImpl(int min, int max);
+  ILoadGameEndLevelParameter provideEndLevelParameter();
+  <T> IMinAndMax provideMinAndMaxImpl(T min, T max);
   ICardImage provideCardImageImpl(String cardFrontImagePath, String cardBackImagePath);
   CardToFind provideCardToFind(ICardImage cardToFindInGame, String cardPresentation);
   Card provideCard(int id, ICardImage cardImage, boolean isCardToFind);
-  GamePresentation provideGamePresentation(String gameTitle, String presentationText);
-  GameTextInformation provideGameTextInformation(
+
+  // Données text du jeu //
+  IGameTextPresentation provideGamePresentation(String gameTitle, String presentationText);
+  IGameTextInformation provideGameTextInformation(
           String[] congratulationWords,
           String[] loosingWords,
-          String gameLostText,
-          String gameVictoryText,
-          GamePresentation gamePresentation
+          IGameTextPresentation gamePresentation,
+          IGameEndParameterByLevel[] gameEndParameterByLevels
   );
+  IGameEndText provideEndText(String endTitle, String endGameText);
+  IGameEndParameterByLevel provideGameEndParameterByLevel(
+          int minErrorLevel,
+          int maxErrorLevel,
+          EndErrorLevel resultLevel,
+          IGameEndText gameEndText
+  );
+
   ImageSelect provideImageSelect(String imagePath, boolean isToFind);
 
 

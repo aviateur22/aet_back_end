@@ -10,8 +10,8 @@ public interface IGenerateNewGameResponse {
   CardToFind getCardToFindInGame();
   Card[] getCards();
   GameLevel getGameLevel();
-  short getTimeToObserveBeforeStart();
-  short getCardToFindQuantity();
-  short getMaxErrorQuantity();
+  int getTimeToObserveBeforeStart();
+  int getCardToFindQuantity();
+  int getMaxErrorQuantity();
   int getTimeInSecToFinish();
 }

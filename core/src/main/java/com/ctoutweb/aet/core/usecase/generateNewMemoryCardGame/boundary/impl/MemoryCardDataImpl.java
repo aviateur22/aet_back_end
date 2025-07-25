@@ -11,18 +11,18 @@ public class MemoryCardDataImpl implements IGenerateNewGameResponse {
   private CardToFind cardToFindInGame;
   private Card[] cards;
   private GameLevel gameLevel;
-  private short timeToObserveBeforeStart;
-  private short cardToFindQuantity;
-  private short errorQuantity;
+  private int timeToObserveBeforeStart;
+  private int cardToFindQuantity;
+  private int errorQuantity;
   private int timeInSecToFinish;
 
   public MemoryCardDataImpl(
           IGameTextInformation gameTextInformation,
           CardToFind cardToFindInGame, Card[] cards,
           GameLevel gameLevel,
-          short timeToObserveBeforeStart,
-          short cardToFindQuantity,
-          short errorQuantity,
+          int timeToObserveBeforeStart,
+          int cardToFindQuantity,
+          int errorQuantity,
           int timeInSecToFinish) {
     this.gameTextInformation = gameTextInformation;
     this.cardToFindInGame = cardToFindInGame;
@@ -55,17 +55,17 @@ public class MemoryCardDataImpl implements IGenerateNewGameResponse {
   }
 
   @Override
-  public short getTimeToObserveBeforeStart() {
+  public int getTimeToObserveBeforeStart() {
     return timeToObserveBeforeStart;
   }
 
   @Override
-  public short getCardToFindQuantity() {
+  public int getCardToFindQuantity() {
     return cardToFindQuantity;
   }
 
   @Override
-  public short getMaxErrorQuantity() {
+  public int getMaxErrorQuantity() {
     return errorQuantity;
   }
 

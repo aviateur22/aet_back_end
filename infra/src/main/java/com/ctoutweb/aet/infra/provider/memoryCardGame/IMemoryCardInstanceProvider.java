@@ -4,6 +4,9 @@ import com.ctoutweb.aet.core.entity.memoryCardGame.ParameterState;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameRequest;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameResponseDto;
+import com.ctoutweb.aet.infra.model.gameText.EndGameErrorLevel;
+import com.ctoutweb.aet.infra.model.gameText.EndGameText;
+import com.ctoutweb.aet.infra.model.gameText.GameEndParameterByLevel;
 import com.ctoutweb.aet.infra.model.gameText.GamePresentation;
 import com.ctoutweb.aet.infra.model.memoryCardGame.*;
 
@@ -14,9 +17,9 @@ public interface IMemoryCardInstanceProvider {
           CardToFind cardToFindInGame,
           Card[] cards,
           String gameLevel,
-          short timeToObserveBeforeStart,
-          short cardToFindQuantity,
-          short errorQuantity,
+          int timeToObserveBeforeStart,
+          int cardToFindQuantity,
+          int errorQuantity,
           int timeInSecToFinis
   );
   IGenerateNewGameRequest provideGenerateNewGameRequest(com.ctoutweb.aet.core.entity.memoryCardGame.GameLevel gameLevel, ParameterState parameterState);
@@ -26,10 +29,16 @@ public interface IMemoryCardInstanceProvider {
   IGameTextInformation provideGameTextInformation(
           String[] congratulationWords,
           String[] loosingWords,
-          String gameLostText,
-          String gameVictoryText,
-          GamePresentation gamePresentation
+          GamePresentation gamePresentation,
+          GameEndParameterByLevel[] gameEndParameterByLevels
   );
+
+  GameEndParameterByLevel provideGameEndParameterByLevel(
+          int minError,
+          int maxError,
+          EndGameErrorLevel endResultLevel,
+          EndGameText endGameText);
+  EndGameText provideEndGameText(String EndTitle, String endGameText);
   CardImage provideCardImage(String cardFrontImagePath, String  cardBackImagePath);
 
   CardToFind provideCardToFind(String cardTextExplanation, CardImage cardImage);

@@ -4,7 +4,7 @@ import com.ctoutweb.aet.core.entity.memoryCardGame.GameLevel;
 import com.ctoutweb.aet.core.entity.memoryCardGame.ParameterState;
 import com.ctoutweb.aet.core.usecase.IUseCase;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.GenerateNewMemoryCardGameUseCase;
-import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.businessRules.MemoryCardGameRules;
+import com.ctoutweb.aet.core.entity.memoryCardGame.businessRules.MemoryCardGameRules;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.port.IGenerateNewGameGateway;
 import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.provider.IBusinessInstanceProvider;
 

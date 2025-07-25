@@ -9,8 +9,8 @@ public record GenerateMemoryCardGameResponseDto(
         CardToFind cardToFindInGame,
         Card[] cards,
         String gameLevel,
-        short timeToObserveBeforeStart,
-        short cardToFindQuantity,
-        short errorQuantity,
+        int timeToObserveBeforeStart,
+        int cardToFindQuantity,
+        int errorQuantity,
         int timeInSecToFinish
 ) {}

@@ -5,9 +5,8 @@ import com.ctoutweb.aet.infra.model.memoryCardGame.IGameTextInformation;
 public record GameTextInformationImpl(
         String[] congratulationWords,
         String[] loosingWords,
-        String gameLostText,
-        String gameVictoryText,
-        GamePresentation gamePresentation) implements IGameTextInformation {
+        GamePresentation gamePresentation,
+        GameEndParameterByLevel[] gameEndParameterByLevels) implements IGameTextInformation {
   @Override
   public String[] getCongratulationWords() {
     return congratulationWords;
@@ -19,17 +18,12 @@ public record GameTextInformationImpl(
   }
 
   @Override
-  public String getGameLostText() {
-    return gameLostText;
-  }
-
-  @Override
-  public String getGameVictoryText() {
-    return gameVictoryText;
-  }
-
-  @Override
   public GamePresentation getGamePresentation() {
     return gamePresentation;
+  }
+
+  @Override
+  public GameEndParameterByLevel[] getGameEndParameterByLevels() {
+    return gameEndParameterByLevels;
   }
 }

@@ -1,11 +1,11 @@
-package com.ctoutweb.aet.core.entity.memoryCardGame.impl;
+package com.ctoutweb.aet.core.entity.memoryCardGame.impl.gameTextImpl;
 
-import com.ctoutweb.aet.core.entity.memoryCardGame.IBornRange;
+import com.ctoutweb.aet.core.entity.IMinAndMax;
 import com.ctoutweb.aet.core.entity.memoryCardGame.ILevelParameter;
 import com.ctoutweb.aet.core.entity.memoryCardGame.LevelType;
 import com.ctoutweb.aet.core.entity.memoryCardGame.ParameterState;
 
-import static com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.gameParameter.LevelParameter.*;
+import static com.ctoutweb.aet.core.paramter.memoryCardGameParameter.LevelParameter.*;
 
 public class LevelParameterImpl implements ILevelParameter {
   protected LevelType levelType;
@@ -14,7 +14,7 @@ public class LevelParameterImpl implements ILevelParameter {
   }
 
   @Override
-  public IBornRange getCardsQuantityToFindBorn(ParameterState parameterState) {
+  public IMinAndMax getCardsQuantityToFindBorn(ParameterState parameterState) {
     return switch (levelType) {
       case EASY -> switch (parameterState) {
 
@@ -35,7 +35,7 @@ public class LevelParameterImpl implements ILevelParameter {
   }
 
   @Override
-  public IBornRange getCardsQuantityInGameBorn(ParameterState parameterState) {
+  public IMinAndMax getCardsQuantityInGameBorn(ParameterState parameterState) {
     return switch (levelType) {
       case EASY -> switch (parameterState) {
 
@@ -56,7 +56,7 @@ public class LevelParameterImpl implements ILevelParameter {
   }
 
   @Override
-  public IBornRange getMaxWrongReturnCardBorn(ParameterState parameterState) {
+  public IMinAndMax getMaxWrongReturnCardBorn(ParameterState parameterState) {
     return switch (levelType) {
       case EASY -> switch (parameterState) {
 
@@ -77,7 +77,7 @@ public class LevelParameterImpl implements ILevelParameter {
   }
 
   @Override
-  public IBornRange getTimeInSecToFinishBorn(ParameterState parameterState) {
+  public IMinAndMax getTimeInSecToFinishBorn(ParameterState parameterState) {
     return switch (levelType) {
       case EASY -> switch (parameterState) {
 

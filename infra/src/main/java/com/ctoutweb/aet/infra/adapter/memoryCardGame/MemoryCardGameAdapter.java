@@ -8,8 +8,9 @@ import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.port.IGenerateNew
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameResponseDto;
 import com.ctoutweb.aet.infra.exception.CardException;
-import com.ctoutweb.aet.infra.exception.ImageException;
 import com.ctoutweb.aet.infra.mapper.InfraMapper;
+import com.ctoutweb.aet.infra.model.gameText.EndGameErrorLevel;
+import com.ctoutweb.aet.infra.model.gameText.GameEndParameterByLevel;
 import com.ctoutweb.aet.infra.model.image.IImageData;
 import com.ctoutweb.aet.infra.model.gameText.GamePresentation;
 import com.ctoutweb.aet.infra.model.memoryCardGame.*;
@@ -131,14 +132,23 @@ public class MemoryCardGameAdapter extends InfraMapper implements IGenerateNewGa
   }
   Function<IGenerateNewGameResponse, IGameTextInformation> mapToInfraGameTextInformation() {
     return  res -> {
+
+      // Contenu des messages du jeu
       var coreGameText = res.getGameTextInformation();
+
+      // Données text d'introuction du jeu
+      GamePresentation infraGamePresentation = map(coreGameText, mapToGamePresentation());
+
+      // parametres des messages de fin du jeu
+      GameEndParameterByLevel[] InfraGameEndParameterByLevels = Arrays.stream(coreGameText.getGameEndParameterByLevels())
+              .map(data -> map(data, mapToGameEndParameterByLevel()))
+              .toArray(GameEndParameterByLevel[]::new);
+
       return INFRA_MEMORY_CARD_INSTANCE_PROVIDER.provideGameTextInformation(
               coreGameText.getCongratulationWords(),
               coreGameText.getLoosingWords(),
-              coreGameText.getGameLostText(),
-              coreGameText.getGameVictoryText(),
-              map(coreGameText, mapToGamePresentation())
-      );
+              infraGamePresentation,
+              InfraGameEndParameterByLevels);
     };
   }
   Function<IGenerateNewGameResponse, CardToFind> mapToInfraCardToFind() {
@@ -163,10 +173,39 @@ public class MemoryCardGameAdapter extends InfraMapper implements IGenerateNewGa
   Function<com.ctoutweb.aet.core.entity.gameText.IGameTextInformation, GamePresentation> mapToGamePresentation() {
 
     return res -> {
-      var gameTitle = res.getGamePresentation().gameTitle();
-      var gamePresentation = res.getGamePresentation().presentationText();
+      var gameTitle = res.getGamePresentation().getGameTitle();
+      var gamePresentation = res.getGamePresentation().getPresentationText();
 
       return INFRA_MEMORY_CARD_INSTANCE_PROVIDER.provideGamePresentation(gameTitle, gamePresentation);
+    };
+  }
+
+  Function<com.ctoutweb.aet.core.entity.gameText.gameEnd.IGameEndParameterByLevel, GameEndParameterByLevel> mapToGameEndParameterByLevel() {
+    return coreRes -> {
+      var minErrorOnLevel = coreRes.getMinErrorLevel();
+      var maxErrorOnLevel = coreRes.getMaxErrorLevel();
+      var coreEndErrorLevel = coreRes.getEndErrorLevel();
+
+      var endGameText = INFRA_MEMORY_CARD_INSTANCE_PROVIDER.provideEndGameText(
+              coreRes.getGameEndText().getEndTitle(),
+              coreRes.getGameEndText().getEndText()
+      );
+
+      EndGameErrorLevel infraEndErrorLevel = switch (coreEndErrorLevel) {
+        case EXCELLENT -> EndGameErrorLevel.EXCELLENT;
+        case VERY_GOOD -> EndGameErrorLevel.VERY_GOOD;
+        case GOOD -> EndGameErrorLevel.GOOD;
+        case MEDUIM -> EndGameErrorLevel.MEDUIM;
+        case BAD -> EndGameErrorLevel.BAD;
+        case VERY_BAD -> EndGameErrorLevel.VERY_BAD;
+        case LOOSE -> EndGameErrorLevel.LOOSE;
+      };
+     return INFRA_MEMORY_CARD_INSTANCE_PROVIDER.provideGameEndParameterByLevel(
+             minErrorOnLevel,
+             maxErrorOnLevel,
+             infraEndErrorLevel,
+             endGameText
+     );
     };
   }
 }

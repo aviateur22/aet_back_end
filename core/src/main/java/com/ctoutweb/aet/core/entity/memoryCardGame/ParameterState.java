@@ -7,7 +7,6 @@ import java.util.Arrays;
 public enum ParameterState {
   RANDOM,
   FIX;
-
   public static ParameterState loadParameterState(String parameterState) {
     return Arrays.stream(ParameterState.values())
             .filter(parameter -> parameter.name().equalsIgnoreCase(parameterState))

@@ -11,13 +11,13 @@ public class GameCardDataImpl implements IGameCardData {
   private CardToFind cardToFindInGame;
   private Card[] cards;
   private GameLevel gameLevel;
-  private short timeToObserveBeforeStart;
-  private short cardToFindQuantity;
-  private short errorQuantity;
+  private int timeToObserveBeforeStart;
+  private int cardToFindQuantity;
+  private int errorQuantity;
   private int timeInSecToFinish;
 
   @Override
-  public void setCardToFindQuantity(short quantity) {
+  public void setCardToFindQuantity(int quantity) {
     this.cardToFindQuantity = quantity;
   }
 
@@ -42,12 +42,12 @@ public class GameCardDataImpl implements IGameCardData {
   }
 
   @Override
-  public void setTimeToObserveBeforeStart(short timeToObserveBeforeStart) {
+  public void setTimeToObserveBeforeStart(int timeToObserveBeforeStart) {
     this.timeToObserveBeforeStart = timeToObserveBeforeStart;
   }
 
   @Override
-  public void setMaxErrorQuantity(short maxErrorQuantity) {
+  public void setMaxErrorQuantity(int maxErrorQuantity) {
     this.errorQuantity = maxErrorQuantity;
   }
 
@@ -77,17 +77,17 @@ public class GameCardDataImpl implements IGameCardData {
   }
 
   @Override
-  public short getTimeToObserveBeforeStart() {
+  public int getTimeToObserveBeforeStart() {
     return this.timeToObserveBeforeStart;
   }
 
   @Override
-  public short getCardToFindQuantity() {
+  public int getCardToFindQuantity() {
     return this.cardToFindQuantity;
   }
 
   @Override
-  public short getMaxErrorQuantity() {
+  public int getMaxErrorQuantity() {
     return this.errorQuantity;
   }
 
