@@ -1,8 +1,8 @@
 package com.ctoutweb.aet.infra.service.gameService.memoryCardGameService.impl;
 
-import com.ctoutweb.aet.core.provider.CoreFactory;
-import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.provider.IBusinessInstanceProvider;
-import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.provider.IDomainModelInstanceProvider;
+import com.ctoutweb.aet.domain.provider.CoreFactory;
+import com.ctoutweb.aet.domain.provider.generateMemoryCardGame.IBusinessInstanceProvider;
+import com.ctoutweb.aet.domain.provider.generateMemoryCardGame.IDomainModelInstanceProvider;
 import com.ctoutweb.aet.infra.adapter.memoryCardGame.MemoryCardGameAdapter;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameResponseDto;

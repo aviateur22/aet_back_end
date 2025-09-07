@@ -1,7 +1,7 @@
 package com.ctoutweb.aet.infra.provider.memoryCardGame;
 
-import com.ctoutweb.aet.core.entity.memoryCardGame.ParameterState;
-import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameRequest;
+import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.ParameterState;
+import com.ctoutweb.aet.domain.port.generateMemoryCardGame.IGenerateMemoryCardGameInput;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameResponseDto;
 import com.ctoutweb.aet.infra.model.gameText.EndGameErrorLevel;
@@ -22,7 +22,7 @@ public interface IMemoryCardInstanceProvider {
           int errorQuantity,
           int timeInSecToFinis
   );
-  IGenerateNewGameRequest provideGenerateNewGameRequest(com.ctoutweb.aet.core.entity.memoryCardGame.GameLevel gameLevel, ParameterState parameterState);
+  IGenerateMemoryCardGameInput provideGenerateNewGameRequest(com.ctoutweb.aet.domain.entity.generateMemoryCardGame.GameLevel gameLevel, ParameterState parameterState);
 
   GamePresentation provideGamePresentation(String gameTitle, String presentationText);
 

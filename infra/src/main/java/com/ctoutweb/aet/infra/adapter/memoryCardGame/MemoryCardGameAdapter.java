@@ -1,10 +1,12 @@
 package com.ctoutweb.aet.infra.adapter.memoryCardGame;
 
-import com.ctoutweb.aet.core.entity.memoryCardGame.CardFace;
-import com.ctoutweb.aet.core.entity.memoryCardGame.ParameterState;
-import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameRequest;
-import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.boundary.IGenerateNewGameResponse;
-import com.ctoutweb.aet.core.usecase.generateNewMemoryCardGame.port.IGenerateNewGameGateway;
+import com.ctoutweb.aet.domain.entity.gameText.gameEnd.IGameEndParameterByLevel;
+import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.CardFace;
+import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.ICardImage;
+import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.ParameterState;
+import com.ctoutweb.aet.domain.port.generateMemoryCardGame.IGenerateMemoryCardGameInput;
+import com.ctoutweb.aet.domain.port.generateMemoryCardGame.IGenerateMemoryCardGameOutput;
+import com.ctoutweb.aet.domain.port.generateMemoryCardGame.IGenerateMemoryCardGameGateway;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameResponseDto;
 import com.ctoutweb.aet.infra.exception.CardException;
@@ -33,7 +35,7 @@ import static com.ctoutweb.aet.infra.provider.InfraFactory.IMAGE_INSTANCE_PROVID
 import static com.ctoutweb.aet.infra.provider.InfraFactory.INFRA_MEMORY_CARD_INSTANCE_PROVIDER;
 
 @Service
-public class MemoryCardGameAdapter extends InfraMapper implements IGenerateNewGameGateway {
+public class MemoryCardGameAdapter extends InfraMapper implements IGenerateMemoryCardGameGateway {
   private final IImageLoaderService imageLoaderService;
   private final IMemoryCardGameImageRepository memoryCardGameImageRepository;
   private final IMemoryCardGameImageFamilyRepository memoryCardGameImageFamilyRepository;
@@ -50,7 +52,7 @@ public class MemoryCardGameAdapter extends InfraMapper implements IGenerateNewGa
     this.memoryCardGameImageFaceRepository = memoryCardGameImageFaceRepository;
   }
 
-  public IGenerateNewGameRequest mapToCoreInputBoundary(GenerateMemoryCardGameRequestDto dto) {
+  public IGenerateMemoryCardGameInput mapToCoreInputBoundary(GenerateMemoryCardGameRequestDto dto) {
     var coreGameLevel = map(dto.gameLevel(), mapToCoreGameLevel());
     var coreGameParameter = map(dto.parameterState(), mapToCoreParameterState());
 
@@ -108,7 +110,7 @@ public class MemoryCardGameAdapter extends InfraMapper implements IGenerateNewGa
     };
   }
 
-  public GenerateMemoryCardGameResponseDto mapToDto(IGenerateNewGameResponse response) {
+  public GenerateMemoryCardGameResponseDto mapToDto(IGenerateMemoryCardGameOutput response) {
     var infraTextInformation = map(response , mapToInfraGameTextInformation());
     var infraCardToFind = map(response, mapToInfraCardToFind());
     var infraCards = map(response, mapToInfraCards());
@@ -124,13 +126,13 @@ public class MemoryCardGameAdapter extends InfraMapper implements IGenerateNewGa
             response.getTimeInSecToFinish()
     );
   }
-  Function<GameLevel, com.ctoutweb.aet.core.entity.memoryCardGame.GameLevel> mapToCoreGameLevel() {
-    return res -> com.ctoutweb.aet.core.entity.memoryCardGame.GameLevel.loadGameLevel(res.name());
+  Function<GameLevel, com.ctoutweb.aet.domain.entity.generateMemoryCardGame.GameLevel> mapToCoreGameLevel() {
+    return res -> com.ctoutweb.aet.domain.entity.generateMemoryCardGame.GameLevel.loadGameLevel(res.name());
   }
   Function<GameParameter, ParameterState> mapToCoreParameterState() {
     return res -> ParameterState.loadParameterState(res.name());
   }
-  Function<IGenerateNewGameResponse, IGameTextInformation> mapToInfraGameTextInformation() {
+  Function<IGenerateMemoryCardGameOutput, IGameTextInformation> mapToInfraGameTextInformation() {
     return  res -> {
 
       // Contenu des messages du jeu
@@ -151,17 +153,17 @@ public class MemoryCardGameAdapter extends InfraMapper implements IGenerateNewGa
               InfraGameEndParameterByLevels);
     };
   }
-  Function<IGenerateNewGameResponse, CardToFind> mapToInfraCardToFind() {
+  Function<IGenerateMemoryCardGameOutput, CardToFind> mapToInfraCardToFind() {
       return res -> {
         var coreCardToFind = res.getCardToFindInGame();
         var infraCardImage = map(coreCardToFind.cardImage(), mapToInfraCardImage());
         return INFRA_MEMORY_CARD_INSTANCE_PROVIDER.provideCardToFind(coreCardToFind.cardTextExplanation(),infraCardImage);
       };
   }
-  Function<com.ctoutweb.aet.core.entity.memoryCardGame.ICardImage, CardImage> mapToInfraCardImage() {
+  Function<ICardImage, CardImage> mapToInfraCardImage() {
     return res -> INFRA_MEMORY_CARD_INSTANCE_PROVIDER.provideCardImage(res.getImageFrontName(), res.getImageBackName());
   }
-  Function<IGenerateNewGameResponse, Card[]> mapToInfraCards() {
+  Function<IGenerateMemoryCardGameOutput, Card[]> mapToInfraCards() {
     return res -> {
       var coreCards = res.getCards();
       return Arrays.stream(coreCards).map(card -> {
@@ -170,7 +172,7 @@ public class MemoryCardGameAdapter extends InfraMapper implements IGenerateNewGa
       }).collect(Collectors.toList()).toArray(new Card[0]);
     };
   }
-  Function<com.ctoutweb.aet.core.entity.gameText.IGameTextInformation, GamePresentation> mapToGamePresentation() {
+  Function<com.ctoutweb.aet.domain.entity.gameText.IGameTextInformation, GamePresentation> mapToGamePresentation() {
 
     return res -> {
       var gameTitle = res.getGamePresentation().getGameTitle();
@@ -180,7 +182,7 @@ public class MemoryCardGameAdapter extends InfraMapper implements IGenerateNewGa
     };
   }
 
-  Function<com.ctoutweb.aet.core.entity.gameText.gameEnd.IGameEndParameterByLevel, GameEndParameterByLevel> mapToGameEndParameterByLevel() {
+  Function<IGameEndParameterByLevel, GameEndParameterByLevel> mapToGameEndParameterByLevel() {
     return coreRes -> {
       var minErrorOnLevel = coreRes.getMinErrorLevel();
       var maxErrorOnLevel = coreRes.getMaxErrorLevel();

@@ -1,7 +1,5 @@
 package com.ctoutweb.aet.infra.util;
 
-import com.ctoutweb.aet.core.util.ArrayUtil;
-
 import java.util.List;
 import java.util.Random;
 

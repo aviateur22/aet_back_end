@@ -1,12 +1,14 @@
 package com.ctoutweb.aet.infra.service;
 
-import com.ctoutweb.aet.core.exception.ImageException;
+import com.ctoutweb.aet.domain.exception.ImageException;
 import com.ctoutweb.aet.infra.adapter.memoryCardGame.MemoryCardGameAdapter;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
 import com.ctoutweb.aet.infra.exception.CardException;
+import com.ctoutweb.aet.infra.model.gameText.GameEndParameterByLevel;
 import com.ctoutweb.aet.infra.model.memoryCardGame.Card;
 import com.ctoutweb.aet.infra.model.memoryCardGame.GameLevel;
 import com.ctoutweb.aet.infra.model.memoryCardGame.GameParameter;
+import com.ctoutweb.aet.infra.model.memoryCardGame.IGameTextInformation;
 import com.ctoutweb.aet.infra.repository.IMemoryCardGameImageFaceRepository;
 import com.ctoutweb.aet.infra.repository.IMemoryCardGameImageFamilyRepository;
 import com.ctoutweb.aet.infra.repository.IMemoryCardGameImageRepository;
@@ -30,7 +32,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.ctoutweb.aet.core.paramter.memoryCardGameParameter.GameData.*;
+import static com.ctoutweb.aet.domain.paramter.memoryCardGameParameter.GameData.*;
 import static com.ctoutweb.aet.infra.constant.memoryCardGame.MemoryCardGameConstant.BACK_IMAGE_FACE_ID;
 import static com.ctoutweb.aet.infra.constant.memoryCardGame.MemoryCardGameConstant.FRONT_IMAGE_FACE_ID;
 import static org.mockito.ArgumentMatchers.any;
@@ -126,10 +128,10 @@ public class MemoryCadGameServiceImplTest {
 
     // Verification du text
     var gameText = result.gameTextInformation();
+    // Validation text de fin
 
+    validateGameEndText(gameText);
     Assertions.assertEquals(GAME_TEXT_PRESENTATION, gameText.getGamePresentation().presentationText());
-    Assertions.assertEquals(GAME_LOOSE_TEXT, gameText.getGameLostText());
-    Assertions.assertEquals(GAME_VICTORY_GAME, gameText.getGameVictoryText());
     Assertions.assertEquals(CONGRATULATION_WORDS, gameText.getCongratulationWords());
     Assertions.assertEquals(LOOSING_WORDS, gameText.getLoosingWords());
     Assertions.assertEquals(GAME_TITLE, gameText.getGamePresentation().gameTitle());
@@ -140,7 +142,41 @@ public class MemoryCadGameServiceImplTest {
    Assertions.assertTrue(result.errorQuantity() > 0);
 
   }
-
+  private void validateGameEndText(IGameTextInformation gameText) {
+    // Vérification des texts de fin de jeux
+    for(GameEndParameterByLevel d : gameText.getGameEndParameterByLevels()) {
+      switch (d.endResultLevel()) {
+        case EXCELLENT ->  {
+          Assertions.assertEquals(END_TEXT_EXCELLENT.getEndText(), d.endGameText().endText());
+          Assertions.assertEquals(END_TEXT_EXCELLENT.getEndTitle(), d.endGameText().endTitle());
+        }
+        case VERY_GOOD -> {
+          Assertions.assertEquals(END_TEXT_VERY_GOOD.getEndText(), d.endGameText().endText());
+          Assertions.assertEquals(END_TEXT_VERY_GOOD.getEndTitle(), d.endGameText().endTitle());
+        }
+        case GOOD -> {
+          Assertions.assertEquals(END_TEXT_GOOD.getEndText(), d.endGameText().endText());
+          Assertions.assertEquals(END_TEXT_GOOD.getEndTitle(), d.endGameText().endTitle());
+        }
+        case MEDUIM -> {
+          Assertions.assertEquals(END_TEXT_MEDIUM.getEndText(), d.endGameText().endText());
+          Assertions.assertEquals(END_TEXT_MEDIUM.getEndTitle(), d.endGameText().endTitle());
+        }
+        case BAD -> {
+          Assertions.assertEquals(END_TEXT_BAD.getEndText(), d.endGameText().endText());
+          Assertions.assertEquals(END_TEXT_BAD.getEndTitle(), d.endGameText().endTitle());
+        }
+        case VERY_BAD -> {
+          Assertions.assertEquals(END_TEXT_VERY_BAD.getEndText(), d.endGameText().endText());
+          Assertions.assertEquals(END_TEXT_VERY_BAD.getEndTitle(), d.endGameText().endTitle());
+        }
+        case LOOSE -> {
+          Assertions.assertEquals(END_TEXT_LOOSE.getEndText(), d.endGameText().endText());
+          Assertions.assertEquals(END_TEXT_LOOSE.getEndTitle(), d.endGameText().endTitle());
+        }
+      }
+    }
+  }
   @ParameterizedTest
   @MethodSource("provideRequestDtoParameter")
   void generateMemoryCardGameData_should_throw_when_no_images_family_avail(GameParameter gameParameter, GameLevel gameLevel) throws IOException {
