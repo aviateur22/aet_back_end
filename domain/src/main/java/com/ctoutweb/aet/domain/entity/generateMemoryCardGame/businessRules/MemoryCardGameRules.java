@@ -14,7 +14,7 @@ import com.ctoutweb.aet.domain.port.generateMemoryCardGame.IGenerateMemoryCardGa
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.ctoutweb.aet.domain.paramter.memoryCardGameParameter.GameData.*;
+import static com.ctoutweb.aet.domain.gameConfiguration.generateMemoryCardGame.GameData.*;
 import static com.ctoutweb.aet.domain.provider.CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER;
 
 public class MemoryCardGameRules extends RuleBase {

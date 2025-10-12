@@ -2,9 +2,9 @@ package com.ctoutweb.aet.domain.entity.generateMemoryCardGame.impl.gameTextImpl;
 
 import com.ctoutweb.aet.domain.entity.IMinAndMax;
 import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.ILevelParameter;
-import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.LevelType;
+import com.ctoutweb.aet.domain.entity.LevelType;
 import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.ParameterState;
-import com.ctoutweb.aet.domain.paramter.memoryCardGameParameter.LevelParameter;
+import com.ctoutweb.aet.domain.gameConfiguration.generateMemoryCardGame.LevelParameter;
 
 public class LevelParameterImpl implements ILevelParameter {
   protected LevelType levelType;

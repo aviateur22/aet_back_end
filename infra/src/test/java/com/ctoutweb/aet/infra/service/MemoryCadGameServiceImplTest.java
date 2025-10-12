@@ -32,7 +32,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.ctoutweb.aet.domain.paramter.memoryCardGameParameter.GameData.*;
+import static com.ctoutweb.aet.domain.gameConfiguration.generateMemoryCardGame.GameData.*;
 import static com.ctoutweb.aet.infra.constant.memoryCardGame.MemoryCardGameConstant.BACK_IMAGE_FACE_ID;
 import static com.ctoutweb.aet.infra.constant.memoryCardGame.MemoryCardGameConstant.FRONT_IMAGE_FACE_ID;
 import static org.mockito.ArgumentMatchers.any;

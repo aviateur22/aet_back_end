@@ -1,0 +1,22 @@
+package com.ctoutweb.aet.domain.util;
+
+import java.util.function.Consumer;
+
+public interface IEventBus {
+
+    /**
+     * Publication d'un evenement vers les suscribers
+     *
+     * @param event L'évenement à publier
+     */
+    <T> void publish(T event);
+
+    /**
+     * Souscribtion d'un message avec un type données
+     *
+     * @param messageType - La class de message a recevoir
+     * @param handler - Consumer qui gerera le message
+     * @param <T> - message type
+     */
+    <T> void suscribe(Class<T> messageType, Consumer<T> handler);
+}

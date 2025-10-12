@@ -1,5 +1,6 @@
 package com.ctoutweb.aet.domain.provider.generateMemoryCardGame;
 
+import com.ctoutweb.aet.domain.entity.LevelType;
 import com.ctoutweb.aet.domain.entity.gameText.ILoadGameEndLevelParameter;
 import com.ctoutweb.aet.domain.entity.IMinAndMax;
 import com.ctoutweb.aet.domain.entity.gameText.IGameTextInformation;

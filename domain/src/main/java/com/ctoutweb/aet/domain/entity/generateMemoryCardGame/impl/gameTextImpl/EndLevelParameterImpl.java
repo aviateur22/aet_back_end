@@ -4,8 +4,8 @@ import com.ctoutweb.aet.domain.entity.gameText.ILoadGameEndLevelParameter;
 import com.ctoutweb.aet.domain.entity.IMinAndMax;
 import com.ctoutweb.aet.domain.entity.gameText.gameEnd.EndErrorLevel;
 import com.ctoutweb.aet.domain.entity.gameText.gameEnd.IGameEndText;
-import com.ctoutweb.aet.domain.paramter.memoryCardGameParameter.GameData;
-import com.ctoutweb.aet.domain.paramter.memoryCardGameParameter.LevelParameter;
+import com.ctoutweb.aet.domain.gameConfiguration.generateMemoryCardGame.GameData;
+import com.ctoutweb.aet.domain.gameConfiguration.generateMemoryCardGame.LevelParameter;
 
 public class EndLevelParameterImpl implements ILoadGameEndLevelParameter {
   @Override

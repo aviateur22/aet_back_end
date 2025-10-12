@@ -1,5 +1,6 @@
 package com.ctoutweb.aet.domain.entity.generateMemoryCardGame;
 
+import com.ctoutweb.aet.domain.entity.LevelType;
 import com.ctoutweb.aet.domain.exception.GameParameterException;
 import com.ctoutweb.aet.domain.provider.CoreFactory;
 

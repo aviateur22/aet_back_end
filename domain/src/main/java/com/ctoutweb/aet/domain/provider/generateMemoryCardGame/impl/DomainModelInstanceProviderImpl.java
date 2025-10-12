@@ -1,5 +1,6 @@
 package com.ctoutweb.aet.domain.provider.generateMemoryCardGame.impl;
 
+import com.ctoutweb.aet.domain.entity.LevelType;
 import com.ctoutweb.aet.domain.entity.gameText.ILoadGameEndLevelParameter;
 import com.ctoutweb.aet.domain.entity.IMinAndMax;
 import com.ctoutweb.aet.domain.entity.gameText.IGameTextInformation;
@@ -10,7 +11,7 @@ import com.ctoutweb.aet.domain.entity.gameText.gameEnd.IGameEndText;
 import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.*;
 import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.impl.CardImageImpl;
 import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.impl.GameCardDataImpl;
-import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.impl.MinAndMaxImpl;
+import com.ctoutweb.aet.domain.entity.MinAndMaxImpl;
 import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.impl.gameTextImpl.*;
 import com.ctoutweb.aet.domain.usecase.GenerateMemoryCardGameUseCase;
 import com.ctoutweb.aet.domain.port.generateMemoryCardGame.IGenerateMemoryCardGameInput;
