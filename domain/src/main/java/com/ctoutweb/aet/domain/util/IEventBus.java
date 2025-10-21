@@ -18,5 +18,5 @@ public interface IEventBus {
      * @param handler - Consumer qui gerera le message
      * @param <T> - message type
      */
-    <T> void suscribe(Class<T> messageType, Consumer<T> handler);
+    <T> void subscribe(Class<T> messageType, Consumer<T> handler);
 }

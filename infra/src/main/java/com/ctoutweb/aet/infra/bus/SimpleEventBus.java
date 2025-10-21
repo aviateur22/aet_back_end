@@ -24,7 +24,7 @@ public class SimpleEventBus implements IEventBus {
     }
 
     @Override
-    public <T> void suscribe(Class<T> messageType, Consumer<T> consumer) {
+    public <T> void subscribe(Class<T> messageType, Consumer<T> consumer) {
         this.suscribers.computeIfAbsent(messageType, k -> new ArrayList<>()).add(consumer);
     }
 }

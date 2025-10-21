@@ -11,4 +11,5 @@ public class MinAndMaxErrorByEndResultLevel {
   public static final IMinAndMax<Integer> MEDUIM_END_LEVEL_BORN = MENTAL_CALCUL_INSTANCE_PROVIDER.provideMinAndMaxInstance(4,5);
   public static final IMinAndMax<Integer> BAD_END_LEVEL_BORN = MENTAL_CALCUL_INSTANCE_PROVIDER.provideMinAndMaxInstance(6,7);
   public static final IMinAndMax<Integer> VERY_BAD_END_LEVEL_BORN = MENTAL_CALCUL_INSTANCE_PROVIDER.provideMinAndMaxInstance(8, 9999999);
+  public static final IMinAndMax<Integer> LOOSE_END_LEVEL_BORN = MENTAL_CALCUL_INSTANCE_PROVIDER.provideMinAndMaxInstance(-1,-1);
 }

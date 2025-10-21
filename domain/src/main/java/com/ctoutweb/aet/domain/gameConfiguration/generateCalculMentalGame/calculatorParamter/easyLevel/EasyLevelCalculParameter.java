@@ -16,5 +16,5 @@ public static final int TIME_AVAIL_BY_CALCUL = 10;
 public static final List<OperatorType> ACCPETED_ASSOCIATED_OPERATOR_LIST = List.of(
           OperatorType.ADDITION, OperatorType.SOUSTRACTION
 );
-public static final List<Integer> LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST = List.of(0, 2, 4, 6, 8);
+public static final List<Double> LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST = List.of(0.0, 2.0, 4.0, 6.0, 8.0);
 }

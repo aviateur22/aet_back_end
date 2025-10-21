@@ -25,7 +25,6 @@ public enum GameLevel {
   }
   private static CalculParameter loadCalculParameterByLevel(LevelType level) {
     return MENTAL_CALCUL_INSTANCE_PROVIDER.loadCalculParameterByLevel(level);
-
   }
 
 }

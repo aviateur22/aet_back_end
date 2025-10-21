@@ -2,6 +2,8 @@ package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator;
 
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
+import com.ctoutweb.aet.domain.injector.MethodInjectorContainer;
+import com.ctoutweb.aet.domain.port.generateMentalCalculGame.ICardFaceIdent;
 import com.ctoutweb.aet.domain.util.IEventBus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,6 +34,12 @@ class CalculGeneratorTest {
      * Given
      */
     CalculGenerator calculGenerator = MENTAL_CALCUL_INSTANCE_PROVIDER.provideCalculGeneratorInstance(calculParameter, eventBus);
+    MethodInjectorContainer.getInstance().register(ICardFaceIdent.class, new ICardFaceIdent() {
+      @Override
+      public String getCardIdent() {
+        return "test";
+      }
+    });
 
     /**
      * when

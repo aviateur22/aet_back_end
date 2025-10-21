@@ -164,6 +164,13 @@ create table IF NOT EXISTS sc_aet.delay_login(
 );
 CREATE INDEX IF NOT EXISTS idx_delay_login ON sc_aet.delay_login(owner_id);
 
+-- Image pour le jeu d calcul mental --
+create table IF NOT EXISTS sc_aet.mental_calcul_game_image(
+    "image_id" BIGINT PRIMARY KEY NOT NULL REFERENCES sc_aet."image"("id") on delete cascade,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
+    "updated_at" TIMESTAMPTZ
+);
+
 ALTER TABLE IF EXISTS sc_aet.player OWNER TO aet;
 ALTER TABLE IF EXISTS sc_aet.owner_account OWNER TO aet;
 ALTER TABLE IF EXISTS sc_aet.family OWNER TO aet;
@@ -401,5 +408,6 @@ INSERT INTO sc_aet.memory_card_game_image ("image_id", "card_face_id", "card_fam
 (33, 1, 4),
 (34, 1, 4);
 
+INSERT INTO sc_aet.mental_calcul_game_image ("image_id") VALUES (10);
 
 COMMIT;

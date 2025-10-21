@@ -13,6 +13,9 @@ import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operan
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse.ProposalResponses;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.validator.ValidationManager;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.gameText.GamePresentationImpl;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.gameText.GameTextManager;
 import com.ctoutweb.aet.domain.provider.common.ICommonInstanceProvider;
 import com.ctoutweb.aet.domain.provider.generateMentalCalculGame.IMentalCalculDomainInstanceProvider;
 import com.ctoutweb.aet.domain.provider.helper.LoadCalculHelper;
@@ -23,25 +26,28 @@ import static com.ctoutweb.aet.domain.provider.CoreFactory.COMMON_INSTANCE_PROVI
 
 public class MentalCalculDomainInstanceProviderImpl implements IMentalCalculDomainInstanceProvider {
   private final LoadCalculHelper loadCalculHelper = new LoadCalculHelper();
-  private final ICommonInstanceProvider commonInstanceProvider = COMMON_INSTANCE_PROVIDER;
+   private final ICommonInstanceProvider commonInstanceProvider = COMMON_INSTANCE_PROVIDER;
 
   @Override
-  public MentalCalculGame provideMentalCalculGameInstance() {
-    return new MentalCalculGame();
+  public MentalCalculGame provideMentalCalculGameInstance(IEventBus eventBus) {
+    return new MentalCalculGame(eventBus);
   }
 
   @Override
   public CalculParameter loadCalculParameterByLevel(LevelType levelType) {
-    return switch (levelType) {
+
+    CalculParameter calculParameter = switch (levelType) {
       case EASY -> loadCalculHelper.loadEasyLevelCalculParameter();
       case MEDIUM -> loadCalculHelper.loadMediumLevelCalculParameter();
       case DIFFICULT -> loadCalculHelper.loadDifficultLevelCalculParameter();
     };
+
+    return calculParameter;
   }
 
   @Override
   public IGameTextPresentation provideGameTextPresentationInstance(String gamePresentationText, String gameTitle) {
-    return null;
+    return new GamePresentationImpl(gamePresentationText, gameTitle);
   }
 
   @Override
@@ -88,20 +94,23 @@ public class MentalCalculDomainInstanceProviderImpl implements IMentalCalculDoma
   }
 
   @Override
-  public OperandInCalcul provideOperandInCalculInstance() {
-    return new OperandInCalcul();
+  public GameTextManager provideGameTextManagerInstance() {
+    return new GameTextManager();
   }
+
 
   @Override
   public CalculGenerator provideCalculGeneratorInstance(CalculParameter calculParameter, IEventBus eventBus) {
     OperatorManager operatorManager = provideOperatorManagerInstance(calculParameter);
     OperandManager calculateOperandResult = provideOperandManagerInstance(calculParameter, eventBus);
-    return new CalculGenerator(calculParameter, operatorManager, calculateOperandResult);
+    ValidationManager validationManager = provideValidationManagerInstance(calculParameter);
+    GameTextManager gameTextManager = provideGameTextManagerInstance();
+    return new CalculGenerator(calculParameter, operatorManager, calculateOperandResult, validationManager, gameTextManager);
   }
 
   @Override
-  public OperationGeneratedInformation provideOperationGeneratedInformationInstance() {
-    return new OperationGeneratedInformation();
+  public ValidationManager provideValidationManagerInstance(CalculParameter calculParameter) {
+    return new ValidationManager(calculParameter);
   }
 
   @Override

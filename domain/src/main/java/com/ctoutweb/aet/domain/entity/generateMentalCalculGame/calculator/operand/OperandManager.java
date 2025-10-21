@@ -4,6 +4,11 @@ import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.OperatorCalculFactory;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse.ProposalResponses;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.Operation;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.ProposalResponse;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.TimeToCalculate;
+import com.ctoutweb.aet.domain.injector.MethodInjectorContainer;
+import com.ctoutweb.aet.domain.port.generateMentalCalculGame.ICardFaceIdent;
 import com.ctoutweb.aet.domain.util.IEventBus;
 import com.ctoutweb.aet.domain.util.logger.ILogger;
 import com.ctoutweb.aet.domain.util.logger.LogLevel;
@@ -12,8 +17,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ctoutweb.aet.domain.provider.CoreFactory.COMMON_INSTANCE_PROVIDER;
-import static com.ctoutweb.aet.domain.provider.CoreFactory.MENTAL_CALCUL_INSTANCE_PROVIDER;
 
+/**
+ * Generation des operandes ainsi que determination du resltat du calcul pour une operation *
+ */
 public class OperandManager {
 
   private final OperandAssociatedToPriorityOperator operandAssociatedToPriorityOperator;
@@ -23,9 +30,9 @@ public class OperandManager {
   private final ILogger LOGGER = COMMON_INSTANCE_PROVIDER.provideLoggerInstance();
 
   /**
-   * Regroupement des données sur l'opération qui a été générée
+   * Identification de l'operation
    */
-  private OperandInCalcul operandInCalcul;
+  int operationIdent;
 
   /**
    * Résulat de calcul sur l'opération généré
@@ -45,12 +52,13 @@ public class OperandManager {
   /**
    * Liste des porposition de réponses
    */
-  private List<Double> proposalResponses;
+  private List<ProposalResponse> proposalResponses;
 
   public OperandManager(
           OperandAssociatedToPriorityOperator operandAssociatedToPriorityOperator,
           GenerateRandomOperand generateRandomOperand,
-          ProposalResponses generateProposalResponse, IEventBus eventBus) {
+          ProposalResponses generateProposalResponse,
+          IEventBus eventBus) {
       this.operandAssociatedToPriorityOperator = operandAssociatedToPriorityOperator;
       this.generateRandomOperand = generateRandomOperand;
       this.generateProposalResponse = generateProposalResponse;
@@ -58,12 +66,17 @@ public class OperandManager {
   }
 
   /**
-   * Génération d'opérandes
+   * Génération d'un liste d'opérandes
    *
-   * @param generatedOperatorParameters - List<OperatorParameter>
+   * @param generatedOperatorParameters Liste des Operateurs avec les parametre générée à l'étape précedente
+   * @param operationPosition Numéro de l'opération qui est en cours de génération
+   *
+   * @see com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager
+   *
    * @return CalculateOperandResult
    */
-  public OperandManager generateOperands(List<OperatorParameter> generatedOperatorParameters) {
+  public OperandManager generateOperands(List<OperatorParameter> generatedOperatorParameters, int operationPosition) {
+    this.operationIdent = operationPosition;
     this.initialOperands = generateRandomOperand.generateCalculOperand(generatedOperatorParameters);
     this.initialOperators = generatedOperatorParameters.stream()
             .map(OperatorParameter::getOperatorType).collect(Collectors.toList());
@@ -76,7 +89,7 @@ public class OperandManager {
    *
    * @param initialOperator - List<OperatorType> - Lite des operateurs initiaux
    * @param initialOperands - List<Integer> - Liste des opérandes initiaux
-   * @see #generateOperands(List)
+   *
    * @return CalculateOperandResult
    */
   public OperandManager calculateOperandResult(List<OperatorType> initialOperator, List<Integer> initialOperands) {
@@ -133,17 +146,20 @@ public class OperandManager {
     return this;
   }
 
-  private void setOperationGeneratedInformation() {
-    this.operandInCalcul = MENTAL_CALCUL_INSTANCE_PROVIDER.provideOperandInCalculInstance();
-    this.operandInCalcul.setGeneratedOperands(initialOperands);
-    this.operandInCalcul.setOperationCalculResult(calculatedOperationResult);
-    this.operandInCalcul.setProposalResponses(proposalResponses);
+  public Operation getGeneratedOperation() {
+    MethodInjectorContainer container = MethodInjectorContainer.getInstance();
 
-  }
-
-  public OperandInCalcul getOperandInCalcul() {
-    setOperationGeneratedInformation();
-    return this.operandInCalcul;
+    Operation generatedOperation = new Operation();
+    TimeToCalculate timeToCalculate = MethodInjectorContainer.getInstance().resolve(TimeToCalculate.class);
+    generatedOperation
+            .setTimeToCalculate(timeToCalculate.time())
+            .setOperationIdent(this.operationIdent)
+            .setValidOperationResponse(this.calculatedOperationResult)
+            .loadListOfOperator(this.initialOperators)
+            .loadListOfMentalNumber(this.initialOperands, container.resolve(ICardFaceIdent.class))
+            .loadProposalResponses(this.proposalResponses);
+    
+    return generatedOperation;
   }
 
   public List<Integer> getInitialOperands() {

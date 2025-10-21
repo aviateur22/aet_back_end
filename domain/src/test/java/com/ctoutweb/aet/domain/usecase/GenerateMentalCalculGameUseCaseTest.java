@@ -1,29 +1,42 @@
 package com.ctoutweb.aet.domain.usecase;
 
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.MentalCalculGame;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.IOperation;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.Operation;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.difficultLevel.DifficultLevelCalculParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.easyLevel.EasyLevelCalculParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.meduimLevel.MeduimLevelCalculParameter;
+import com.ctoutweb.aet.domain.port.generateMentalCalculGame.ICardFaceIdent;
 import com.ctoutweb.aet.domain.port.generateMentalCalculGame.IGenerateMentalCalculGameInput;
+import com.ctoutweb.aet.domain.util.IEventBus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 public class GenerateMentalCalculGameUseCaseTest {
+
+  @Mock
+  IEventBus eventBus;
+
   GenerateMentalCalculGameUseCase generateMentalCalculGameUseCase;
+
+  MentalCalculGame mentalCalculGame = new MentalCalculGame(Mockito.mock(IEventBus.class));
 
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    this.generateMentalCalculGameUseCase = new GenerateMentalCalculGameUseCase();
+    this.generateMentalCalculGameUseCase = new GenerateMentalCalculGameUseCase(eventBus);
   }
 
   @ParameterizedTest
@@ -122,7 +135,7 @@ public class GenerateMentalCalculGameUseCaseTest {
       }
 
       @Override
-      public List<Operation> getOpertionCalculs() {
+      public ICardFaceIdent getCardFaceId() {
         return null;
       }
     };
@@ -136,15 +149,15 @@ public class GenerateMentalCalculGameUseCaseTest {
     );
   }
 
-  private boolean isLastDigitValid(GameLevel gameLevel, List<Operation> operations) {
+  private boolean isLastDigitValid(GameLevel gameLevel, List<IOperation> operations) {
     return operations.stream().allMatch(operation -> {
-      boolean areLastDigitOfMentalNumberValid = operation.mentalNumbers().stream().allMatch(num->lastNumerberCheckFactory(gameLevel, num.number()));
-      boolean isLastDigitOfOperationResponseValid = lastNumerberCheckFactory(gameLevel, operation.validOperationResponse());
+      boolean areLastDigitOfMentalNumberValid = operation.getMentalNumbers().stream().allMatch(num->lastNumerberCheckFactory(gameLevel, num.number()));
+      boolean isLastDigitOfOperationResponseValid = lastNumerberCheckFactory(gameLevel, operation.getValidOperationResponse());
       return areLastDigitOfMentalNumberValid && isLastDigitOfOperationResponseValid;
     });
   }
 
-  private boolean lastNumerberCheckFactory(GameLevel gameLevel, int numberToCheck) {
+  private boolean lastNumerberCheckFactory(GameLevel gameLevel, double numberToCheck) {
     return switch (gameLevel) {
       case EASY -> EasyLevelCalculParameter.LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST.contains(Math.abs(numberToCheck % 10));
       case MEDIUM -> MeduimLevelCalculParameter.LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST.contains(Math.abs(numberToCheck % 10));

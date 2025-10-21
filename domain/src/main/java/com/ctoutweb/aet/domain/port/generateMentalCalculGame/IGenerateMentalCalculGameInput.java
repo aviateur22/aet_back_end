@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface IGenerateMentalCalculGameInput {
   GameLevel getGameLevel();
-  List<Operation> getOpertionCalculs();
+  ICardFaceIdent getCardFaceId();
 }

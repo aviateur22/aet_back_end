@@ -12,10 +12,6 @@ public class LoadCalculHelper {
 
   public CalculParameter loadEasyLevelCalculParameter() {
     return new CalculParameter(
-            this.loadOperatorHelper.loadEasyAdditionOperator(),
-            this.loadOperatorHelper.loadEasySoustractionOperator(),
-            this.loadOperatorHelper.loadEasyMultiplicationOperator(),
-            this.loadOperatorHelper.loadEasyDivisionOperator(),
             LevelType.EASY,
             EasyLevelCalculParameter.CALCUL_QUANTITY,
             EasyLevelCalculParameter.MIN_OPERATOR_BY_CALCUL,
@@ -29,10 +25,6 @@ public class LoadCalculHelper {
 
   public CalculParameter loadMediumLevelCalculParameter() {
     return new CalculParameter(
-            this.loadOperatorHelper.loadMediumAdditionOperator(),
-            this.loadOperatorHelper.loadMediumSoustractionOperator(),
-            this.loadOperatorHelper.loadMediumMultiplicationOperator(),
-            this.loadOperatorHelper.loadMediumDivisionOperator(),
             LevelType.MEDIUM,
             MeduimLevelCalculParameter.CALCUL_QUANTITY,
             MeduimLevelCalculParameter.MIN_OPERATOR_BY_CALCUL,
@@ -46,10 +38,6 @@ public class LoadCalculHelper {
 
   public CalculParameter loadDifficultLevelCalculParameter() {
     return new CalculParameter(
-            this.loadOperatorHelper.loadDifficultAdditionOperator(),
-            this.loadOperatorHelper.loadDifficultSoustractionOperator(),
-            this.loadOperatorHelper.loadDifficultMultiplicationOperator(),
-            this.loadOperatorHelper.loadDifficultDivisionOperator(),
             LevelType.DIFFICULT,
             DifficultLevelCalculParameter.CALCUL_QUANTITY,
             DifficultLevelCalculParameter.MIN_OPERATOR_BY_CALCUL,

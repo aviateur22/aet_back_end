@@ -1,12 +1,16 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator;
 
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand.OperandInCalcul;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand.OperandManager;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand.OperationGeneratedInformation;
 
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorInCalcul;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.validator.ValidationManager;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.gameText.GameTextInformation;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.gameText.GameTextManager;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.IOperation;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.IOption;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.Option;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,17 +20,40 @@ public class CalculGenerator {
   private final OperatorManager operatorManager;
   private final OperandManager operandManager;
   private final CalculParameter calculParameter;
+  private final ValidationManager validationManager;
+  private final GameTextManager gameTextManager;
 
+  /**
+   * Liste des operateurs qui sont générés
+   */
   private List<OperatorInCalcul> operatorsInCalculs;
-  private List<OperandInCalcul> operandInCalculs;
+
+  /**
+   * Liste des opérations générées
+   */
+  private List<IOperation> operations;
+
+  /**
+   * Option sur le paramétrage du jeu
+   */
+  private IOption gameOption;
+
+  /**
+   * text de presentation et de fin de jeu
+   */
+  private GameTextInformation gameTextInformation;
 
   public CalculGenerator(
           CalculParameter calculParameter,
           OperatorManager operatorManager,
-          OperandManager calculateOperandResult) {
+          OperandManager calculateOperandResult,
+          ValidationManager validationManager,
+          GameTextManager gameTextManager) {
     this.operatorManager = operatorManager;
     this.calculParameter = calculParameter;
     this.operandManager = calculateOperandResult;
+    this.validationManager = validationManager;
+    this.gameTextManager = gameTextManager;
   }
 
   /**
@@ -34,10 +61,31 @@ public class CalculGenerator {
    *
    * @return Liste comportants les données générées pour le jeu de clacul
    */
-  public List<OperationGeneratedInformation> generateCalculGame() {
-    return generateOperatorForCalculGame()
+  public CalculGenerator generateCalculGame() {
+    return generateGameText()
+            .generateOperatorForCalculGame()
             .generateOperandForCalculGame()
-            .loadOperationGeneratedInformationList();
+            .generateOptionForCalculGame();
+  }
+
+  /**
+   * Chargement du text de presentation et de fin de jeu
+   *
+   * @return Le text necesaire a l'affichage du jeu
+   */
+  private CalculGenerator generateGameText() {
+    this.gameTextInformation = this.gameTextManager.loadGameTextInformation();
+    return this;
+  }
+
+  /**
+   * Chargement des option du jeu
+   *
+   * @return CalculGenerator
+   */
+  private CalculGenerator generateOptionForCalculGame() {
+    this.gameOption = Option.getOption().loadOptionGame(calculParameter);
+    return this;
   }
 
   /**
@@ -56,26 +104,32 @@ public class CalculGenerator {
   }
 
   /**
-   * Détermine
-   * @return
+   * Génération d'une liste d'opérandes.
+   * Cette methodes charges toutes les données relatif aux operations du jeu à partir de la liste des operateurs
+   *
+   * @see #generateOperatorForCalculGame() Generation d'une liste d'operateur pour le jeu
+   * @see #operations La liste regroupant les données des operétion
+   *
+   * @return CalculGenerator
    */
   private CalculGenerator generateOperandForCalculGame() {
     if(operatorsInCalculs.isEmpty())
       return this;
 
 
-    this.operandInCalculs = new ArrayList<>();
-    for(OperatorInCalcul operation: operatorsInCalculs) {
+    this.operations = new ArrayList<>();
+
+    for(OperatorInCalcul operator : operatorsInCalculs) {
       int attempts = 0;
-      OperandInCalcul operandInCalcul;
+      IOperation operation;
 
       do {
-        operandInCalcul = this.generateSingleOperation(operation);
+        operation = this.generateSingleOperation(operator);
         attempts++;
 
-      } while(attempts < 100 && !isOperationResultValid(operandInCalcul)) ;
+      } while(attempts < 100 && !validationManager.isOperationResultValid(operation)) ;
 
-      this.operandInCalculs.add(operandInCalcul);
+      this.operations.add(operation);
     };
 
     return this;
@@ -84,49 +138,28 @@ public class CalculGenerator {
 
   /**
    * Génération des données nécéssaire a une opération
-   * @param operation OperatorInCalcul -
+   * @param operatorInCalcul OperatorInCalcul -
    * @return OperationInformation - Les données générées sur l'operation
    */
-  private OperandInCalcul generateSingleOperation(OperatorInCalcul operation) {
+  private IOperation generateSingleOperation(OperatorInCalcul operatorInCalcul) {
     return operandManager
-            .generateOperands(operation.getOperators())
+            .generateOperands(operatorInCalcul.getOperators(), operatorInCalcul.getOperationPosition())
             .calculateOperandResult(operandManager.getInitialOperators(), operandManager.getInitialOperands())
             .generateProposalResponse(4)
-            .getOperandInCalcul();
+            .getGeneratedOperation();
   }
 
-  /**
-   * Renvoie la validité de la réponse de calcul qui a été généréré
-   * @param operationInformation OperationInformation
-   * @return boolean - Si la réponse est valide
-   */
-  private boolean isOperationResultValid(OperandInCalcul operationInformation) {
-    return isCalculatedResponseRespectLastDigitContraint(operationInformation.getOperationCalculResult())
-            && isCalculatedResponseRespectNegativeConstraint(operationInformation.getOperationCalculResult());
+  //////////////////////////////////////////////////////////////////////////
+  ///
+  public List<IOperation> getOperations() {
+    return operations;
   }
 
-  /**
-   * Vérification si le dernier digit est valide
-   * @return boolean - Dernier digit valide
-   */
-  private boolean isCalculatedResponseRespectLastDigitContraint(double calculatedOperationResult) {
-    double lastDigit = Math.abs(calculatedOperationResult % 10);
-    return this.calculParameter.getLastCalculatedDigitAcceptedList().contains(lastDigit);
+  public IOption getGameOption() {
+    return gameOption;
   }
 
-  /**
-   * Vérification si le dernier digit est valide
-   * @return boolean - Dernier digit valide
-   */
-  private boolean isCalculatedResponseRespectNegativeConstraint(double calculatedOperationResult) {
-    if(this.calculParameter.getIsNegativeCalculResultAccepted())
-      return true;
-
-    return !(calculatedOperationResult < 0);
+  public GameTextInformation getGameTextInformation() {
+    return gameTextInformation;
   }
-
-  List<OperationGeneratedInformation> loadOperationGeneratedInformationList() {
-   return null;
-  }
-
 }

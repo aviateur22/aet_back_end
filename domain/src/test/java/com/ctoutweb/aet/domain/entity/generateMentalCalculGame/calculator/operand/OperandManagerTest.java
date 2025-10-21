@@ -6,9 +6,8 @@ import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.OperatorParameterFactory;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
-import com.ctoutweb.aet.domain.provider.CoreFactory;
-import com.ctoutweb.aet.domain.provider.generateMentalCalculGame.IMentalCalculDomainInstanceProvider;
-import com.ctoutweb.aet.domain.provider.generateMentalCalculGame.impl.MentalCalculDomainInstanceProviderImpl;
+import com.ctoutweb.aet.domain.injector.MethodInjectorContainer;
+import com.ctoutweb.aet.domain.port.generateMentalCalculGame.ICardFaceIdent;
 import com.ctoutweb.aet.domain.util.IEventBus;
 
 import org.junit.jupiter.api.Assertions;
@@ -321,6 +320,14 @@ class OperandManagerTest {
 
   @Test
   void calculateResult() {
+
+    MethodInjectorContainer.getInstance().register(ICardFaceIdent.class, new ICardFaceIdent() {
+      @Override
+      public String getCardIdent() {
+        return "test";
+      }
+    });
+
     /**
      * Given
      * Calcul 2 * 2 + 2 - 2 * 2 * 2 + 2 * 2
@@ -337,7 +344,7 @@ class OperandManagerTest {
 
     var generatedOperandData1 = operandManager
             .calculateOperandResult(operators, numerals)
-            .getOperandInCalcul();
+            .getGeneratedOperation();
 
     /**
      * Given
@@ -355,7 +362,7 @@ class OperandManagerTest {
      */
     var generatedOperandData2 = operandManager
             .calculateOperandResult(operators, numerals)
-            .getOperandInCalcul();
+            .getGeneratedOperation();
 
     /**
      * Given
@@ -374,15 +381,15 @@ class OperandManagerTest {
      */
     var generatedOperandData3 = operandManager
             .calculateOperandResult(operators, numerals)
-            .getOperandInCalcul();
+            .getGeneratedOperation();
 
     /**
      * then - Vérification du resultat
      */
     Assertions.assertNotNull(generatedOperandData1);
-    Assertions.assertEquals(2, generatedOperandData1.getOperationCalculResult());
-    Assertions.assertEquals(32, generatedOperandData2.getOperationCalculResult());
-    Assertions.assertEquals(7, generatedOperandData3.getOperationCalculResult());
+    Assertions.assertEquals(2, generatedOperandData1.getValidOperationResponse());
+    Assertions.assertEquals(32, generatedOperandData2.getValidOperationResponse());
+    Assertions.assertEquals(7, generatedOperandData3.getValidOperationResponse());
   }
 
   @ParameterizedTest
@@ -391,14 +398,14 @@ class OperandManagerTest {
     /**
      * when
      */
-    var result = operandManager.generateOperands(operatorParameters);
+    var result = operandManager.generateOperands(operatorParameters, 1);
 
     /**
      * then
      */
     Assertions.assertEquals(operatorParameters.size() + 1, result.getInitialOperands().size());
     result.getInitialOperands().forEach(operand -> {
-      Assertions.assertTrue(calculParameter.getLastCalculatedDigitAcceptedList().contains(operand % 10));
+      Assertions.assertTrue(calculParameter.getLastCalculatedDigitAcceptedList().contains(operand.doubleValue() % 10));
     });
   }
 
@@ -406,21 +413,34 @@ class OperandManagerTest {
   @MethodSource("provideOperatorParameterList")
   void verify_proposal_responses(List<OperatorParameter> operatorParameters) {
     /**
+     * Given
+     */
+    MethodInjectorContainer.getInstance().register(ICardFaceIdent.class, new ICardFaceIdent() {
+      @Override
+      public String getCardIdent() {
+        return "test";
+      }
+    });
+
+    /**
      * when
      */
     var actualOperandInCalcul = operandManager
-            .generateOperands(operatorParameters)
+            .generateOperands(operatorParameters, 1)
             .calculateOperandResult(operandManager.getInitialOperators(), operandManager.getInitialOperands())
             .generateProposalResponse(4)
-            .getOperandInCalcul();
+            .getGeneratedOperation();
 
     /**
      * then
      */
     var proposalResponses = actualOperandInCalcul.getProposalResponses();
-    var calculResult = actualOperandInCalcul.getOperationCalculResult();
+    var calculResult = actualOperandInCalcul.getValidOperationResponse();
     Assertions.assertEquals(4, proposalResponses.size());
-    Assertions.assertEquals(1, proposalResponses.stream().filter(d -> d.equals(calculResult)).count());
+    Assertions.assertEquals(1, proposalResponses
+            .stream()
+            .filter(proposal -> proposal.proposalResponse() == calculResult)
+            .count());
 
   }
 

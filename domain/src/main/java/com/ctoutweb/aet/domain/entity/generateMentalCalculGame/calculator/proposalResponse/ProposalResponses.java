@@ -1,12 +1,13 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse;
 
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.ProposalResponse;
 import com.ctoutweb.aet.domain.util.NumberUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProposalResponses {
-    private List<Double> proposalResults;
+    private List<ProposalResponse> proposalResults;
 
     /**
      * Génération d'une liste de proposition de réponse
@@ -19,13 +20,13 @@ public class ProposalResponses {
 
         for(int j = 0; j < proposalQuantity ; j++) {
             if(j==0) {
-                proposalResults.add(calculatedOperationResult);
+                proposalResults.add(new ProposalResponse(j + 1, calculatedOperationResult));
                 continue;
             }
 
             double proposalResponse = generateSingleResponse(calculatedOperationResult);
 
-            proposalResults.add(proposalResponse);
+            proposalResults.add(new ProposalResponse(j + 1, proposalResponse));
         }
         return this;
     }
@@ -61,7 +62,7 @@ public class ProposalResponses {
         return Math.floor(proposalAnswer) + decimalPart;
     }
 
-    public List<Double> getProposalResults() {
+    public List<ProposalResponse> getProposalResults() {
         return proposalResults;
     }
 }

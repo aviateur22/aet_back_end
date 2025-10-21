@@ -7,7 +7,7 @@ import com.ctoutweb.aet.domain.provider.generateMemoryCardGame.IDomainModelInsta
 public class CalculMentalText {
   private static final IDomainModelInstanceProvider PROVIDER = CoreFactory.MEMORY_CARD_DOMAIN_MODEL_INSTANCE_PROVIDER;
   public static final String GAME_TEXT_PRESENTATION = "Pépare toi a faire une suite de calcul. Attention tu davras les faire de tête";
-  public static final String GAME_TITLE = "Les claculs de tête";
+  public static final String GAME_TITLE = "Les calculs de tête";
   public static final String GAME_VICTORY_GAME = "Bravooooo. Tu es trop fort. N'hésite pas à recommencer";
 
   // Chargement text de fin

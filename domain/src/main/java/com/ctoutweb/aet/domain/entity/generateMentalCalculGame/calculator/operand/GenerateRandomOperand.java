@@ -50,7 +50,8 @@ public class GenerateRandomOperand {
         return generatedOperand;
     }
 
-    private boolean isRandomOperandValid(int operand) {
-        return calculParameter.getLastCalculatedDigitAcceptedList().contains(operand % 10);
+    private boolean isRandomOperandValid(Integer operand) {
+        var operandDouble = operand.doubleValue();
+        return calculParameter.getLastCalculatedDigitAcceptedList().contains(operandDouble % 10);
     }
 }

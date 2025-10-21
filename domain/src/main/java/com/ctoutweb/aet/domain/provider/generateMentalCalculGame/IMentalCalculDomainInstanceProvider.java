@@ -12,6 +12,8 @@ import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operan
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse.ProposalResponses;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.validator.ValidationManager;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.gameText.GameTextManager;
 import com.ctoutweb.aet.domain.util.IEventBus;
 
 public interface IMentalCalculDomainInstanceProvider {
@@ -19,7 +21,7 @@ public interface IMentalCalculDomainInstanceProvider {
    *
    * @return MentalCalculGame
    */
-  MentalCalculGame provideMentalCalculGameInstance();
+  MentalCalculGame provideMentalCalculGameInstance(IEventBus eventBus);
 
   /**
    * Chargement des parametre du calcul mental suivant le LevelType
@@ -75,9 +77,16 @@ public interface IMentalCalculDomainInstanceProvider {
 
   ProposalResponses provideProposalResponseInstance();
 
-  OperandInCalcul provideOperandInCalculInstance();
+  GameTextManager provideGameTextManagerInstance();
 
   CalculGenerator provideCalculGeneratorInstance(CalculParameter calculParameter, IEventBus eventBus);
 
-  OperationGeneratedInformation provideOperationGeneratedInformationInstance();
+  /**
+   * Renvoie une instance de ValidationManager
+   *
+   * @param calculParameter Les parametres du jeu de calcul
+   *
+   * @return ValidationManager
+   */
+  ValidationManager provideValidationManagerInstance(CalculParameter calculParameter);
 }
