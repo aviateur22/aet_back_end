@@ -2,7 +2,7 @@ package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.opera
 
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.OperatorParameterFactory;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorParameterFactory;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.util.NumberUtil;
 
@@ -128,7 +128,7 @@ public class OperatorManager {
    * @return OperatorParameter
    */
   private OperatorParameter getOperatorParameter(OperatorType operatorType) {
-    return OperatorParameterFactory.loadOperatorParamter(operatorType, calculParameter.getLevel());
+    return OperatorParameterFactory.loadOperatorParameter(operatorType, calculParameter.getGameLevel());
   }
 
   public List<OperatorInCalcul> getOperationInCalculs() {

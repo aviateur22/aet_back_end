@@ -1,9 +1,9 @@
-package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator;
+package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand;
 
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
 
-public class OperatorCalculFactory {
-  private OperatorCalculFactory() {
+public class CalculateOperation {
+  private CalculateOperation() {
     throw new IllegalStateException("Utility class");
   }
   public static double calculateOperationResult(OperatorType operator, double firstNumeral, double secondNumeral) {

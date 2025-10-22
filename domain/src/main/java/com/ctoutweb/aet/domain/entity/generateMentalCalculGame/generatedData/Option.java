@@ -1,6 +1,7 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData;
 
 import com.ctoutweb.aet.domain.entity.LevelType;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
 
 public class Option implements IOption {
@@ -8,10 +9,10 @@ public class Option implements IOption {
     private boolean isMultipleChoiceVisible;
 
     public Option loadOptionGame(CalculParameter calculParameter) {
-        LevelType level = calculParameter.getLevel();
+        GameLevel level = calculParameter.getGameLevel();
 
         this.gameLevel = level.name();
-        this.isMultipleChoiceVisible = level == LevelType.EASY;
+        this.isMultipleChoiceVisible = level == GameLevel.EASY;
 
         return this;
     }

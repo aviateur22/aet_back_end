@@ -1,9 +1,9 @@
 package com.ctoutweb.aet.domain.usecase;
 
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.CalculParameterFactory;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.MentalCalculGame;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.TimeToCalculate;
-import com.ctoutweb.aet.domain.injector.MethodInjectorContainer;
-import com.ctoutweb.aet.domain.port.generateMentalCalculGame.ICardFaceIdent;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.port.generateMentalCalculGame.IGenerateMentalCalculGameInput;
 import com.ctoutweb.aet.domain.port.generateMentalCalculGame.IGenerateMentalCalculGameOutput;
 
@@ -14,16 +14,17 @@ import static com.ctoutweb.aet.domain.provider.CoreFactory.MENTAL_CALCUL_INSTANC
 
 public class GenerateMentalCalculGameUseCase implements IUseCase<GenerateMentalCalculGameUseCase.Input, GenerateMentalCalculGameUseCase.Output> {
 
-  private final MentalCalculGame mentalCalculGame;
+  private final IEventBus eventBus;
 
     public GenerateMentalCalculGameUseCase(IEventBus eventBus) {
-        this.mentalCalculGame = MENTAL_CALCUL_INSTANCE_PROVIDER.provideMentalCalculGameInstance(eventBus);
+        this.eventBus = eventBus;
     }
 
     @Override
-  public Output execute(Input input) {
+    public Output execute(Input input) {
+      GameLevel gameLevel = input.generateMentalCalculGameInput().getGameLevel();
 
-    return mentalCalculGame
+      return loadMentalGameInstance(gameLevel)
             .generateGame(input)
             .getGeneratedGameData();
   }
@@ -32,5 +33,14 @@ public class GenerateMentalCalculGameUseCase implements IUseCase<GenerateMentalC
   }
 
   public record Output(IGenerateMentalCalculGameOutput generateMentalCalculGameOutput) implements IUseCase.Output {
+  }
+
+  private MentalCalculGame loadMentalGameInstance(GameLevel gameLevel) {
+    CalculParameter calculParameter = CalculParameterFactory.loadCalculParameterByLevel(gameLevel);
+
+    return MENTAL_CALCUL_INSTANCE_PROVIDER.provideMentalCalculGameInstance(
+            eventBus,
+            calculParameter
+    );
   }
 }

@@ -1,7 +1,5 @@
-package com.ctoutweb.aet.domain.provider.helper;
+package com.ctoutweb.aet.domain.entity.generateMentalCalculGame;
 
-
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.difficultLevel.operator.DifficultLevelAdditionOperatorParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.difficultLevel.operator.DifficultLevelDivisionOperatorParameter;
@@ -16,7 +14,38 @@ import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calcul
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.meduimLevel.operator.MeduimLevelMultiplicationOperatorParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.meduimLevel.operator.MeduimLevelSoustractionOperatorParameter;
 
-public class LoadOperatorHelper {
+/**
+ * Chargement des parametres des Operator
+ */
+public class OperatorParameterFactory {
+
+  private static final OperatorParameterFactory instance = new OperatorParameterFactory();
+
+  public static OperatorParameter loadOperatorParameter(OperatorType operatorType, GameLevel gameLevel) {
+
+    return switch (gameLevel) {
+      case EASY ->  switch (operatorType) {
+        case ADDITION -> instance.loadEasyAdditionOperator();
+        case SOUSTRACTION -> instance.loadEasySoustractionOperator();
+        case MULTIPLICATION -> instance.loadEasyMultiplicationOperator();
+        case DIVISION -> instance.loadEasyDivisionOperator();
+      };
+
+      case MEDIUM -> switch (operatorType) {
+        case ADDITION -> instance.loadMediumAdditionOperator();
+        case SOUSTRACTION -> instance.loadMediumSoustractionOperator();
+        case MULTIPLICATION -> instance.loadMediumMultiplicationOperator();
+        case DIVISION -> instance.loadMediumDivisionOperator();
+      };
+
+      case DIFFICULT -> switch (operatorType) {
+        case ADDITION -> instance.loadDifficultAdditionOperator();
+        case SOUSTRACTION -> instance.loadDifficultSoustractionOperator();
+        case MULTIPLICATION -> instance.loadDifficultMultiplicationOperator();
+        case DIVISION -> instance.loadDifficultDivisionOperator();
+      };
+    };
+  }
 
   public OperatorParameter loadEasyAdditionOperator() {
     return new OperatorParameter(
@@ -97,5 +126,4 @@ public class LoadOperatorHelper {
             DifficultLevelDivisionOperatorParameter.MIN_AND_MAX_NUMBER,
             DifficultLevelDivisionOperatorParameter.OPERATOR_PRESENCE_PERCENT);
   }
-
 }

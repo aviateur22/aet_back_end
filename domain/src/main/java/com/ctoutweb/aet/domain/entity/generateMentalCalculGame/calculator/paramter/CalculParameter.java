@@ -1,9 +1,8 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter;
 
-import com.ctoutweb.aet.domain.entity.LevelType;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.IOperation;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.Operation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.List;
  */
 public class CalculParameter {
 
-   private final LevelType level;
+   private final GameLevel gameLevel;
 
   /**
    * Nombre de calcul à faire
@@ -57,7 +56,7 @@ public class CalculParameter {
   }
 
   public CalculParameter(
-          LevelType level,
+          GameLevel level,
           int calculQuantity,
           int minOperatorByCalcul,
           int maxOperatorByCalcul,
@@ -65,7 +64,7 @@ public class CalculParameter {
           int timeAvailableToCalculate,
           List<OperatorType> acceptedOperatorAssociationList,
           List<Double> lastCalculatedDigitAcceptedList) {
-    this.level = level;
+    this.gameLevel = level;
     this.calculQuantity = calculQuantity;
     this.minOperatorByCalcul = minOperatorByCalcul;
     this.maxOperatorByCalcul = maxOperatorByCalcul;
@@ -98,8 +97,8 @@ public class CalculParameter {
     return acceptedOperatorAssociationList;
   }
 
-  public LevelType getLevel() {
-    return level;
+  public GameLevel getGameLevel() {
+    return gameLevel;
   }
 
   public int getTimeAvailableToCalculate() {

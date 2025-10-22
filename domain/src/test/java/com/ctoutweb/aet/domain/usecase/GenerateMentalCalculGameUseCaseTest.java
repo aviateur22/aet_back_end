@@ -2,8 +2,12 @@ package com.ctoutweb.aet.domain.usecase;
 
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.MentalCalculGame;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand.OperandManager;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.validator.ValidationManager;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.gameText.GameTextManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.IOperation;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.Operation;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.difficultLevel.DifficultLevelCalculParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.easyLevel.EasyLevelCalculParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.meduimLevel.MeduimLevelCalculParameter;
@@ -29,9 +33,29 @@ public class GenerateMentalCalculGameUseCaseTest {
   @Mock
   IEventBus eventBus;
 
+  @Mock
+  CalculParameter calculParameter;
+
+  @Mock
+  OperandManager operandManager;
+
+  @Mock
+  OperatorManager operatorManager;
+
+  @Mock
+  GameTextManager gameTextManager;
+  @Mock
+  ValidationManager validationManager;
+
   GenerateMentalCalculGameUseCase generateMentalCalculGameUseCase;
 
-  MentalCalculGame mentalCalculGame = new MentalCalculGame(Mockito.mock(IEventBus.class));
+  MentalCalculGame mentalCalculGame = new MentalCalculGame(
+          Mockito.mock(IEventBus.class),
+          calculParameter,
+          operatorManager,
+          operandManager,
+          validationManager,
+          gameTextManager);
 
   @BeforeEach
   public void init() {
@@ -136,7 +160,12 @@ public class GenerateMentalCalculGameUseCaseTest {
 
       @Override
       public ICardFaceIdent getCardFaceId() {
-        return null;
+        return new ICardFaceIdent() {
+          @Override
+          public String getCardIdent() {
+            return "test";
+          }
+        };
       }
     };
   }

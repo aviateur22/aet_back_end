@@ -1,5 +1,6 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator;
 
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.CalculParameterFactory;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
@@ -58,9 +59,9 @@ public class OperatorManagerTest {
 
     private static Stream<Arguments> provideCalcuParameter() {
         return Stream.of(
-                Arguments.of(GameLevel.EASY.getParameter()),
-                Arguments.of(GameLevel.MEDIUM.getParameter()),
-                Arguments.of(GameLevel.DIFFICULT.getParameter())
+                Arguments.of(CalculParameterFactory.loadCalculParameterByLevel(GameLevel.EASY)),
+                Arguments.of(CalculParameterFactory.loadCalculParameterByLevel(GameLevel.MEDIUM)),
+                Arguments.of(CalculParameterFactory.loadCalculParameterByLevel(GameLevel.DIFFICULT))
         );
     }
 }

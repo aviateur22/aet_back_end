@@ -1,13 +1,8 @@
 package com.ctoutweb.aet.domain.provider.generateMentalCalculGame;
 
 import com.ctoutweb.aet.domain.entity.IMinAndMax;
-import com.ctoutweb.aet.domain.entity.LevelType;
 import com.ctoutweb.aet.domain.entity.gameText.IGameTextPresentation;
-import com.ctoutweb.aet.domain.entity.gameText.ILoadGameEndLevelParameter;
-import com.ctoutweb.aet.domain.entity.gameText.gameEnd.EndErrorLevel;
-import com.ctoutweb.aet.domain.entity.gameText.gameEnd.IGameEndText;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.MentalCalculGame;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.CalculGenerator;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand.*;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
@@ -21,46 +16,35 @@ public interface IMentalCalculDomainInstanceProvider {
    *
    * @return MentalCalculGame
    */
-  MentalCalculGame provideMentalCalculGameInstance(IEventBus eventBus);
+  MentalCalculGame provideMentalCalculGameInstance(IEventBus eventBus, CalculParameter calculParameter);
 
   /**
    * Chargement des parametre du calcul mental suivant le LevelType
-   * @param levelType - LeveType
+   *
    * @return CalculParameter
    */
-  CalculParameter loadCalculParameterByLevel(LevelType levelType);
+  CalculParameter provideCalculParameterInstance();
 
   /**
    * Text de presentation
+   *
    * @param gamePresentationText - Text de presentation
    * @param gameTitle - Tite du jeu
+   *
    * @return IGameTextPresentation
    */
   IGameTextPresentation provideGameTextPresentationInstance(String gamePresentationText, String gameTitle);
 
   /**
-   * Text de fin de jeu
-   * @param endTitle Titre de fin
-   * @param endGameText - Text de fin
-   * @return IGameEndText
-   */
-  IGameEndText provideEndTextIntance(String endTitle, String endGameText);
-
-  /**
+   *  Renvoie une implementation de IMinAndMax
    *
-   * @param minErrorLevel - Nombre d'erreur mini
-   * @param maxErrorLevel - Nombre d'erreur max
-   * @param resultLevel - Resultat en niveau d'erreur (Bien , moyen , pas bien...)
-   * @param gameEndText - Text de fin (voir provideEndTextIntance)
+   * @param min La valeur minimum attendue
+   * @param max La valeur maximal attendu
    *
-   * @return ILoadGameEndLevelParameter
+   * @return Instance implementant IMinAndMax
+   *
+   * @param <T> Le type de min et max IMinAndMax
    */
-  ILoadGameEndLevelParameter provideLoadGameEndLevelParameterInstance(
-          int minErrorLevel,
-          int maxErrorLevel,
-          EndErrorLevel resultLevel,
-          IGameEndText gameEndText);
-
   <T> IMinAndMax<T> provideMinAndMaxInstance(T min, T max);
 
   /**
@@ -78,8 +62,6 @@ public interface IMentalCalculDomainInstanceProvider {
   ProposalResponses provideProposalResponseInstance();
 
   GameTextManager provideGameTextManagerInstance();
-
-  CalculGenerator provideCalculGeneratorInstance(CalculParameter calculParameter, IEventBus eventBus);
 
   /**
    * Renvoie une instance de ValidationManager

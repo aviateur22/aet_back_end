@@ -1,7 +1,6 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand;
 
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.OperatorCalculFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +59,7 @@ public class OperandAssociatedToPriorityOperator {
             OperatorType operator = operatorPriorityIndex.get(j).getValue();
 
             if (lastOperatorPosition == operatorPosition - 1) {
-                double result = OperatorCalculFactory.calculateOperationResult(operator, lastOperationResult, numerals.get(operatorPosition + 1));
+                double result = CalculateOperation.calculateOperationResult(operator, lastOperationResult, numerals.get(operatorPosition + 1));
                 lastOperationResult = result;
                 initialOperandToRemoveIndexes.add(operatorPosition + 1);
                 if(isPriorityCalculResultToBeAdd(j, operatorPriorityIndex, operatorPosition)) {
@@ -68,7 +67,7 @@ public class OperandAssociatedToPriorityOperator {
                 }
 
             } else if (operatorPosition == 0) {
-                double result = OperatorCalculFactory.calculateOperationResult(operator, numerals.get(0), numerals.get(1));
+                double result = CalculateOperation.calculateOperationResult(operator, numerals.get(0), numerals.get(1));
                 lastOperationResult = result;
                 initialOperandToRemoveIndexes.add(operatorPosition);
                 initialOperandToRemoveIndexes.add(operatorPosition + 1);
@@ -77,7 +76,7 @@ public class OperandAssociatedToPriorityOperator {
                 }
 
             } else {
-                double result = OperatorCalculFactory.calculateOperationResult(operator, numerals.get(operatorPosition), numerals.get(operatorPosition + 1));
+                double result = CalculateOperation.calculateOperationResult(operator, numerals.get(operatorPosition), numerals.get(operatorPosition + 1));
                 lastOperationResult = result;
                 initialOperandToRemoveIndexes.add(operatorPosition);
                 initialOperandToRemoveIndexes.add(operatorPosition + 1);

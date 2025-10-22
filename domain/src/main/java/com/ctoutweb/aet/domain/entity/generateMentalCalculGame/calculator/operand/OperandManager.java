@@ -1,12 +1,11 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand;
 
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.OperatorCalculFactory;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse.ProposalResponses;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.Operation;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.ProposalResponse;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.TimeToCalculate;
 import com.ctoutweb.aet.domain.injector.MethodInjectorContainer;
 import com.ctoutweb.aet.domain.port.generateMentalCalculGame.ICardFaceIdent;
 import com.ctoutweb.aet.domain.util.IEventBus;
@@ -23,6 +22,7 @@ import static com.ctoutweb.aet.domain.provider.CoreFactory.COMMON_INSTANCE_PROVI
  */
 public class OperandManager {
 
+  private final CalculParameter calculParameter;
   private final OperandAssociatedToPriorityOperator operandAssociatedToPriorityOperator;
   private final GenerateRandomOperand generateRandomOperand;
   private final ProposalResponses generateProposalResponse;
@@ -55,10 +55,12 @@ public class OperandManager {
   private List<ProposalResponse> proposalResponses;
 
   public OperandManager(
+          CalculParameter calculParameter,
           OperandAssociatedToPriorityOperator operandAssociatedToPriorityOperator,
           GenerateRandomOperand generateRandomOperand,
           ProposalResponses generateProposalResponse,
           IEventBus eventBus) {
+      this.calculParameter = calculParameter;
       this.operandAssociatedToPriorityOperator = operandAssociatedToPriorityOperator;
       this.generateRandomOperand = generateRandomOperand;
       this.generateProposalResponse = generateProposalResponse;
@@ -140,7 +142,7 @@ public class OperandManager {
     calculatedOperationResult = updatedOperands.get(0);
 
     for(int i = 0; i < lowPriorityOperators.size(); i++) {
-      calculatedOperationResult = OperatorCalculFactory.calculateOperationResult(lowPriorityOperators.get(i), calculatedOperationResult, updatedOperands.get(i + 1));
+      calculatedOperationResult = CalculateOperation.calculateOperationResult(lowPriorityOperators.get(i), calculatedOperationResult, updatedOperands.get(i + 1));
     }
 
     return this;
@@ -148,15 +150,15 @@ public class OperandManager {
 
   public Operation getGeneratedOperation() {
     MethodInjectorContainer container = MethodInjectorContainer.getInstance();
+    ICardFaceIdent cardIndent = container.resolve(ICardFaceIdent.class);
 
     Operation generatedOperation = new Operation();
-    TimeToCalculate timeToCalculate = MethodInjectorContainer.getInstance().resolve(TimeToCalculate.class);
     generatedOperation
-            .setTimeToCalculate(timeToCalculate.time())
+            .setTimeToCalculate(calculParameter.getTimeAvailableToCalculate())
             .setOperationIdent(this.operationIdent)
             .setValidOperationResponse(this.calculatedOperationResult)
             .loadListOfOperator(this.initialOperators)
-            .loadListOfMentalNumber(this.initialOperands, container.resolve(ICardFaceIdent.class))
+            .loadListOfMentalNumber(this.initialOperands, cardIndent)
             .loadProposalResponses(this.proposalResponses);
     
     return generatedOperation;

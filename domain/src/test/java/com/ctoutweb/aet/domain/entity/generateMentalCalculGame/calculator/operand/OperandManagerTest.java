@@ -1,9 +1,10 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand;
 
 import com.ctoutweb.aet.domain.entity.LevelType;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.CalculParameterFactory;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.OperatorParameterFactory;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorParameterFactory;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.injector.MethodInjectorContainer;
@@ -33,7 +34,7 @@ class OperandManagerTest {
   @Mock
   IEventBus eventBus;
 
-  CalculParameter calculParameter = GameLevel.EASY.getParameter();
+  CalculParameter calculParameter = CalculParameterFactory.loadCalculParameterByLevel(GameLevel.EASY);
 
   @BeforeEach
   public void init() {
@@ -445,9 +446,9 @@ class OperandManagerTest {
   }
 
   private static Stream<Arguments> provideOperatorParameterList() {
-    OperatorParameter additionParameter = OperatorParameterFactory.loadOperatorParamter(OperatorType.ADDITION, LevelType.EASY);
-    OperatorParameter soustractionParameter = OperatorParameterFactory.loadOperatorParamter(OperatorType.SOUSTRACTION, LevelType.EASY);
-    OperatorParameter multiplicationParameter = OperatorParameterFactory.loadOperatorParamter(OperatorType.MULTIPLICATION, LevelType.EASY);
+    OperatorParameter additionParameter = OperatorParameterFactory.loadOperatorParameter(OperatorType.ADDITION, GameLevel.EASY);
+    OperatorParameter soustractionParameter = OperatorParameterFactory.loadOperatorParameter(OperatorType.SOUSTRACTION, GameLevel.EASY);
+    OperatorParameter multiplicationParameter = OperatorParameterFactory.loadOperatorParameter(OperatorType.MULTIPLICATION, GameLevel.EASY);
 
     return Stream.of(
             Arguments.of(List.of(additionParameter)),

@@ -1,14 +1,11 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.gameText;
 
-import com.ctoutweb.aet.domain.entity.gameText.IGameTextInformation;
 import com.ctoutweb.aet.domain.entity.gameText.IGameTextPresentation;
-import com.ctoutweb.aet.domain.entity.gameText.ILoadGameEndLevelParameter;
 import com.ctoutweb.aet.domain.entity.gameText.gameEnd.EndErrorLevel;
 import com.ctoutweb.aet.domain.entity.gameText.gameEnd.IGameEndParameterByLevel;
 import com.ctoutweb.aet.domain.provider.CoreFactory;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.CalculMentalText.GAME_TEXT_PRESENTATION;
 import static com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.CalculMentalText.GAME_TITLE;
