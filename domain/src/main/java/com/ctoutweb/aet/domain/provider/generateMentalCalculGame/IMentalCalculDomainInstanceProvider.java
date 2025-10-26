@@ -3,12 +3,16 @@ package com.ctoutweb.aet.domain.provider.generateMentalCalculGame;
 import com.ctoutweb.aet.domain.entity.IMinAndMax;
 import com.ctoutweb.aet.domain.entity.gameText.IGameTextPresentation;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.MentalCalculGame;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.card.CardManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand.*;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operation.OperationManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse.ProposalResponses;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.validator.ValidationManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.gameText.GameTextManager;
+import com.ctoutweb.aet.domain.port.RandomProvider;
+import com.ctoutweb.aet.domain.port.generateMentalCalculGame.IGenerateMentalCalculGameGateway;
 import com.ctoutweb.aet.domain.util.IEventBus;
 
 public interface IMentalCalculDomainInstanceProvider {
@@ -16,7 +20,11 @@ public interface IMentalCalculDomainInstanceProvider {
    *
    * @return MentalCalculGame
    */
-  MentalCalculGame provideMentalCalculGameInstance(IEventBus eventBus, CalculParameter calculParameter);
+  MentalCalculGame provideMentalCalculGameInstance(
+          IEventBus eventBus,
+          CalculParameter calculParameter,
+          RandomProvider randomProvider,
+          IGenerateMentalCalculGameGateway gateway);
 
   /**
    * Chargement des parametre du calcul mental suivant le LevelType
@@ -55,13 +63,22 @@ public interface IMentalCalculDomainInstanceProvider {
 
   OperatorManager provideOperatorManagerInstance(CalculParameter calculParameter);
 
+  OperationManager provideOperationManagerInstance(RandomProvider randomProvider, IGenerateMentalCalculGameGateway gateway);
+
   GenerateRandomOperand provideOperandGeneratorFactoryInstance(CalculParameter calculParameter);
 
-  OperandManager provideOperandManagerInstance(CalculParameter calculParameter, IEventBus eventBus);
+  OperandManager provideOperandManagerInstance(CalculParameter calculParameter, IEventBus eventBus, RandomProvider randomProvider);
 
-  ProposalResponses provideProposalResponseInstance();
+  ProposalResponses provideProposalResponseInstance(RandomProvider randomProvider);
 
   GameTextManager provideGameTextManagerInstance();
+
+  /**
+   * Generation instance de CardManager
+   *
+   * @return CardManager
+   */
+  CardManager provideCardManagerInstance(RandomProvider randomProvider, IGenerateMentalCalculGameGateway gateway);
 
   /**
    * Renvoie une instance de ValidationManager

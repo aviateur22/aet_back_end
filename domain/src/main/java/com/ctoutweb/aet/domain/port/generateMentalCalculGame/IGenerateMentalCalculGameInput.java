@@ -1,11 +1,10 @@
 package com.ctoutweb.aet.domain.port.generateMentalCalculGame;
 
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.Operation;
-
-import java.util.List;
-
 public interface IGenerateMentalCalculGameInput {
-  GameLevel getGameLevel();
-  ICardFaceIdent getCardFaceId();
+  /**
+   * Le niveau de jeu requis pour génrer le nouveau jeu
+   *
+   * @return LE niveau de jeu
+   */
+  String getGameLevel();
 }

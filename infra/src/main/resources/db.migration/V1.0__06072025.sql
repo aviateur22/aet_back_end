@@ -186,6 +186,7 @@ ALTER TABLE IF EXISTS sc_aet.delay_login OWNER TO aet;
 ALTER TABLE IF EXISTS sc_aet.memory_card_game_image OWNER TO aet;
 ALTER TABLE IF EXISTS sc_aet.memory_card_game_image_face OWNER TO aet;
 ALTER TABLE IF EXISTS sc_aet.memory_card_game_image_family OWNER TO aet;
+ALTER TABLE IF EXISTS sc_aet.mental_calcul_game_image OWNER TO aet;
 
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE sc_aet.player TO aet;
@@ -203,6 +204,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE sc_aet.delay_login TO aet;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE sc_aet.memory_card_game_image TO aet;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE sc_aet.memory_card_game_image_face TO aet;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE sc_aet.memory_card_game_image_family TO aet;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE sc_aet.mental_calcul_game_image TO aet;
 
 
 CREATE SEQUENCE IF NOT EXISTS sc_aet.player_id_seq START WITH 1 INCREMENT BY 1 NO CYCLE;

@@ -3,7 +3,7 @@ package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.TimeUnit;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse.ProposalResponses;
-import com.ctoutweb.aet.domain.port.generateMentalCalculGame.ICardFaceIdent;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.CardFaceIdent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class Operation implements IOperation {
      *
      * @return Operation
      */
-    public Operation loadListOfMentalNumber(List<Integer> generatedOperands, ICardFaceIdent cardFaceIdent) {
+    public Operation loadListOfMentalNumber(List<Integer> generatedOperands, CardFaceIdent cardFaceIdent) {
         if(generatedOperands == null)
             return this;
 

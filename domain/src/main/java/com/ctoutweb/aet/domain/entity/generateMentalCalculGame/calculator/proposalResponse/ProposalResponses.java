@@ -1,13 +1,19 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse;
 
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.ProposalResponse;
+import com.ctoutweb.aet.domain.port.RandomProvider;
 import com.ctoutweb.aet.domain.util.NumberUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProposalResponses {
-    private List<ProposalResponse> proposalResults;
+
+    private final RandomProvider randomProvider;
+
+    public ProposalResponses(RandomProvider randomProvider) {
+        this.randomProvider = randomProvider;
+    }
 
     /**
      * Génération d'une liste de proposition de réponse
@@ -15,8 +21,8 @@ public class ProposalResponses {
      * @param proposalQuantity Nombre de réponse proposé
      * @return ProposalResponse
      */
-    public ProposalResponses generateProposalResponses(int proposalQuantity, double calculatedOperationResult) {
-        this.proposalResults = new ArrayList<>();
+    public List<ProposalResponse> generateProposalResponses(int proposalQuantity, double calculatedOperationResult) {
+        final List<ProposalResponse> proposalResults = new ArrayList<>();
 
         for(int j = 0; j < proposalQuantity ; j++) {
             if(j==0) {
@@ -28,7 +34,8 @@ public class ProposalResponses {
 
             proposalResults.add(new ProposalResponse(j + 1, proposalResponse));
         }
-        return this;
+
+        return randomProvider.shuffleList(proposalResults);
     }
 
     /**
@@ -60,9 +67,5 @@ public class ProposalResponses {
     private double updateProposalResponseDecimal(double calculatedOperationResult, double proposalAnswer) {
         double decimalPart = calculatedOperationResult - Math.floor(calculatedOperationResult);
         return Math.floor(proposalAnswer) + decimalPart;
-    }
-
-    public List<ProposalResponse> getProposalResults() {
-        return proposalResults;
     }
 }

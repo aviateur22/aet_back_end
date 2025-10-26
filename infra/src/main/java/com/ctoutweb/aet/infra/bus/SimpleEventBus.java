@@ -1,6 +1,7 @@
 package com.ctoutweb.aet.infra.bus;
 
 import com.ctoutweb.aet.domain.util.IEventBus;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+@Component
 public class SimpleEventBus implements IEventBus {
     Map<Class<?>, List<Consumer<?>>> suscribers = new ConcurrentHashMap<>();
 

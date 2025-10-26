@@ -1,7 +1,4 @@
-package com.ctoutweb.aet.infra.model.memoryCardGame;
-
-import com.ctoutweb.aet.infra.model.gameText.GameEndParameterByLevel;
-import com.ctoutweb.aet.infra.model.gameText.GamePresentation;
+package com.ctoutweb.aet.infra.model.gameText;
 
 public interface IGameTextInformation {
     String[] getCongratulationWords();

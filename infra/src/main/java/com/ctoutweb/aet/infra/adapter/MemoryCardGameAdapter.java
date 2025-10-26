@@ -1,4 +1,4 @@
-package com.ctoutweb.aet.infra.adapter.memoryCardGame;
+package com.ctoutweb.aet.infra.adapter;
 
 import com.ctoutweb.aet.domain.entity.gameText.gameEnd.IGameEndParameterByLevel;
 import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.CardFace;
@@ -13,6 +13,7 @@ import com.ctoutweb.aet.infra.exception.CardException;
 import com.ctoutweb.aet.infra.mapper.InfraMapper;
 import com.ctoutweb.aet.infra.model.gameText.EndGameErrorLevel;
 import com.ctoutweb.aet.infra.model.gameText.GameEndParameterByLevel;
+import com.ctoutweb.aet.infra.model.gameText.IGameTextInformation;
 import com.ctoutweb.aet.infra.model.image.IImageData;
 import com.ctoutweb.aet.infra.model.gameText.GamePresentation;
 import com.ctoutweb.aet.infra.model.memoryCardGame.*;
@@ -75,7 +76,7 @@ public class MemoryCardGameAdapter extends InfraMapper implements IGenerateMemor
    */
   private MemoryCardGameImageFamilyEntity getRadomFamilyCard() {
     List<MemoryCardGameImageFamilyEntity> familyCards = this.memoryCardGameImageFamilyRepository.findAll();
-    return ListUtil.selectOneItem(familyCards);
+    return ListUtil.selectOneRandomItemInList(familyCards);
   }
 
   /**

@@ -1,6 +1,5 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand;
 
-import com.ctoutweb.aet.domain.entity.LevelType;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.CalculParameterFactory;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
@@ -8,7 +7,8 @@ import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorParameter
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.injector.MethodInjectorContainer;
-import com.ctoutweb.aet.domain.port.generateMentalCalculGame.ICardFaceIdent;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.CardFaceIdent;
+import com.ctoutweb.aet.domain.port.RandomProvider;
 import com.ctoutweb.aet.domain.util.IEventBus;
 
 import org.junit.jupiter.api.Assertions;
@@ -18,6 +18,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
@@ -34,6 +35,9 @@ class OperandManagerTest {
   @Mock
   IEventBus eventBus;
 
+  @Mock
+  RandomProvider randomProvider;
+
   CalculParameter calculParameter = CalculParameterFactory.loadCalculParameterByLevel(GameLevel.EASY);
 
   @BeforeEach
@@ -41,7 +45,7 @@ class OperandManagerTest {
     MockitoAnnotations.openMocks(this);
 
     operandAssociatedToPriorityOperator = MENTAL_CALCUL_INSTANCE_PROVIDER.provideOperandAssociatedToPriorityOperatorInstance();
-    operandManager = MENTAL_CALCUL_INSTANCE_PROVIDER.provideOperandManagerInstance(calculParameter, eventBus);
+    operandManager = MENTAL_CALCUL_INSTANCE_PROVIDER.provideOperandManagerInstance(calculParameter, eventBus, randomProvider);
   }
 
   @Test
@@ -321,14 +325,6 @@ class OperandManagerTest {
 
   @Test
   void calculateResult() {
-
-    MethodInjectorContainer.getInstance().register(ICardFaceIdent.class, new ICardFaceIdent() {
-      @Override
-      public String getCardIdent() {
-        return "test";
-      }
-    });
-
     /**
      * Given
      * Calcul 2 * 2 + 2 - 2 * 2 * 2 + 2 * 2
@@ -343,9 +339,8 @@ class OperandManagerTest {
     operators.add(OperatorType.ADDITION);
     operators.add(OperatorType.MULTIPLICATION);
 
-    var generatedOperandData1 = operandManager
-            .calculateOperandResult(operators, numerals)
-            .getGeneratedOperation();
+    var calculateResult1 = operandManager
+            .calculateOperandResult(operators, numerals) ;
 
     /**
      * Given
@@ -361,9 +356,8 @@ class OperandManagerTest {
     /**
      * When
      */
-    var generatedOperandData2 = operandManager
-            .calculateOperandResult(operators, numerals)
-            .getGeneratedOperation();
+    var calculateResult2 = operandManager
+            .calculateOperandResult(operators, numerals);
 
     /**
      * Given
@@ -380,17 +374,16 @@ class OperandManagerTest {
     /**
      * When
      */
-    var generatedOperandData3 = operandManager
-            .calculateOperandResult(operators, numerals)
-            .getGeneratedOperation();
+    var calculateResult3 = operandManager
+            .calculateOperandResult(operators, numerals);
+
 
     /**
      * then - Vérification du resultat
      */
-    Assertions.assertNotNull(generatedOperandData1);
-    Assertions.assertEquals(2, generatedOperandData1.getValidOperationResponse());
-    Assertions.assertEquals(32, generatedOperandData2.getValidOperationResponse());
-    Assertions.assertEquals(7, generatedOperandData3.getValidOperationResponse());
+    Assertions.assertEquals(2, calculateResult1);
+    Assertions.assertEquals(32, calculateResult2);
+    Assertions.assertEquals(7, calculateResult3);
   }
 
   @ParameterizedTest
@@ -399,7 +392,7 @@ class OperandManagerTest {
     /**
      * when
      */
-    var result = operandManager.generateOperands(operatorParameters, 1);
+    var result = operandManager.generateOperands(operatorParameters);
 
     /**
      * then
@@ -416,31 +409,25 @@ class OperandManagerTest {
     /**
      * Given
      */
-    MethodInjectorContainer.getInstance().register(ICardFaceIdent.class, new ICardFaceIdent() {
-      @Override
-      public String getCardIdent() {
-        return "test";
-      }
-    });
+    var initialOperators = operatorParameters.stream().map(OperatorParameter::getOperatorType).toList();
+    Mockito.when(randomProvider.shuffleList(Mockito.anyList())).thenReturn(Mockito.anyList());
 
     /**
      * when
      */
-    var actualOperandInCalcul = operandManager
-            .generateOperands(operatorParameters, 1)
-            .calculateOperandResult(operandManager.getInitialOperators(), operandManager.getInitialOperands())
-            .generateProposalResponse(4)
-            .getGeneratedOperation();
+    var operationResult = operandManager
+            .generateOperands(operatorParameters)
+            .calculateOperandResult(initialOperators, operandManager.getInitialOperands());
+
+    var proposalResponses = operandManager.generateProposalResponse(4, operationResult);
 
     /**
      * then
      */
-    var proposalResponses = actualOperandInCalcul.getProposalResponses();
-    var calculResult = actualOperandInCalcul.getValidOperationResponse();
     Assertions.assertEquals(4, proposalResponses.size());
     Assertions.assertEquals(1, proposalResponses
             .stream()
-            .filter(proposal -> proposal.proposalResponse() == calculResult)
+            .filter(proposal -> proposal.proposalResponse() == operationResult)
             .count());
 
   }

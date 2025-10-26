@@ -3,31 +3,31 @@ package com.ctoutweb.aet.domain.entity.generateMentalCalculGame;
 import com.ctoutweb.aet.domain.entity.JobGame;
 import com.ctoutweb.aet.domain.entity.gameText.IGameTextInformation;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand.OperandManager;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operation.OperationManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorInCalcul;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.validator.ValidationManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.gameText.GameTextInformation;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.gameText.GameTextManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.IOperation;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.IOption;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.Option;
-import com.ctoutweb.aet.domain.injector.MethodInjectorContainer;
-import com.ctoutweb.aet.domain.port.generateMentalCalculGame.ICardFaceIdent;
 import com.ctoutweb.aet.domain.port.generateMentalCalculGame.IGenerateMentalCalculGameOutput;
 import com.ctoutweb.aet.domain.usecase.GenerateMentalCalculGameUseCase;
-import com.ctoutweb.aet.domain.util.IEventBus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Génération d'un jeu de calcul mental
  */
 public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.Input, GenerateMentalCalculGameUseCase.Output> {
 
+  private final OperationManager operationManager;
   private final CalculParameter calculParameter;
-  private final IEventBus eventBus;
   private final OperatorManager operatorManager;
   private final OperandManager operandManager;
   private final ValidationManager validationManager;
@@ -36,12 +36,12 @@ public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.In
   /**
    * Liste des operateurs qui sont générés
    */
-  private List<OperatorInCalcul> operatorsInCalculs;
+  private final List<OperatorInCalcul> operatorsInCalculs = new ArrayList<>();
 
   /**
    * Liste des opérations générées
    */
-  private List<IOperation> operations;
+  private final List<IOperation> operations = new ArrayList<>();
 
   /**
    * Option sur le paramétrage du jeu
@@ -54,13 +54,13 @@ public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.In
   private GameTextInformation gameTextInformation;
 
   public MentalCalculGame(
-          IEventBus eventBus,
+          OperationManager operationManager,
           CalculParameter parameter,
           OperatorManager operatorManager,
           OperandManager operandManager,
           ValidationManager validationManager,
           GameTextManager gameTextManager) {
-    this.eventBus = eventBus;
+    this.operationManager = operationManager;
     this.calculParameter = parameter;
     this.operatorManager = operatorManager;
     this.operandManager = operandManager;
@@ -70,7 +70,6 @@ public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.In
 
   @Override
   public MentalCalculGame generateGame(GenerateMentalCalculGameUseCase.Input inputData) {
-    registerDependencies(inputData);
     generateCalculGame();
     return this;
   }
@@ -135,10 +134,12 @@ public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.In
    */
   private MentalCalculGame generateOperatorForCalculGame() {
 
-    this.operatorsInCalculs = operatorManager
+    var operatorsInCalculs = operatorManager
             .determineOperatorQuantityInCalculGame()
             .loadOperatorInCalculGame()
             .getOperationInCalculs();
+
+    this.operatorsInCalculs.addAll(operatorsInCalculs);
 
     return this;
   }
@@ -156,9 +157,6 @@ public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.In
     if(operatorsInCalculs.isEmpty())
       return this;
 
-
-    this.operations = new ArrayList<>();
-
     for(OperatorInCalcul operator : operatorsInCalculs) {
       int attempts = 0;
       IOperation operation;
@@ -175,7 +173,6 @@ public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.In
     return this;
   }
 
-
   /**
    * Génération des données nécéssaire a une opération
    *
@@ -184,17 +181,27 @@ public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.In
    * @return OperationInformation - Les données générées sur l'operation
    */
   private IOperation generateSingleOperation(OperatorInCalcul operatorInCalcul) {
-    return operandManager
-            .generateOperands(operatorInCalcul.getOperators(), operatorInCalcul.getOperationPosition())
-            .calculateOperandResult(operandManager.getInitialOperators(), operandManager.getInitialOperands())
-            .generateProposalResponse(4)
-            .getGeneratedOperation();
-  }
 
-  private void registerDependencies(GenerateMentalCalculGameUseCase.Input inputData) {
-    MethodInjectorContainer
-            .getInstance()
-            .register(ICardFaceIdent.class, inputData.generateMentalCalculGameInput().getCardFaceId());
-  }
+    List<OperatorType> initialOperators = operatorInCalcul
+            .getOperatorParameters()
+            .stream()
+            .map(OperatorParameter::getOperatorType)
+            .collect(Collectors.toList());
 
+
+    double operationResult = operandManager
+            .reinitializeOperandManager()
+            .generateOperands(operatorInCalcul.getOperatorParameters())
+            .calculateOperandResult(initialOperators, operandManager.getInitialOperands());
+
+    var proposalResponses = operandManager.generateProposalResponse(4, operationResult);
+
+    return operationManager.getGeneratedOperation(
+            operatorInCalcul.getOperationPosition(),
+            calculParameter.getTimeAvailableToCalculate(),
+            operationResult,
+            initialOperators,
+            operandManager.getInitialOperands(),
+            proposalResponses);
+  }
 }

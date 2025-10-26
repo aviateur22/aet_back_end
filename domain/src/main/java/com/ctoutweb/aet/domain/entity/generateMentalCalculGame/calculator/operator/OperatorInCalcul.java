@@ -43,7 +43,7 @@ public class OperatorInCalcul {
     this.operatorQuantity = operatorQuantity;
   }
 
-  public List<OperatorParameter> getOperators() {
+  public List<OperatorParameter> getOperatorParameters() {
     return operators;
   }
 

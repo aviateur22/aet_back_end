@@ -3,6 +3,7 @@ package com.ctoutweb.aet.domain.usecase;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.MentalCalculGame;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand.OperandManager;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operation.OperationManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.validator.ValidationManager;
@@ -11,7 +12,9 @@ import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.IOp
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.difficultLevel.DifficultLevelCalculParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.easyLevel.EasyLevelCalculParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.meduimLevel.MeduimLevelCalculParameter;
-import com.ctoutweb.aet.domain.port.generateMentalCalculGame.ICardFaceIdent;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.CardFaceIdent;
+import com.ctoutweb.aet.domain.port.RandomProvider;
+import com.ctoutweb.aet.domain.port.generateMentalCalculGame.IGenerateMentalCalculGameGateway;
 import com.ctoutweb.aet.domain.port.generateMentalCalculGame.IGenerateMentalCalculGameInput;
 import com.ctoutweb.aet.domain.util.IEventBus;
 import org.junit.jupiter.api.Assertions;
@@ -20,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -44,13 +46,24 @@ public class GenerateMentalCalculGameUseCaseTest {
 
   @Mock
   GameTextManager gameTextManager;
+
   @Mock
   ValidationManager validationManager;
 
+  @Mock
+  RandomProvider randomProvider;
+
+  @Mock
+  OperationManager operationManager;
+
+  @Mock
+  IGenerateMentalCalculGameGateway gateway;
+
+  @Mock
   GenerateMentalCalculGameUseCase generateMentalCalculGameUseCase;
 
   MentalCalculGame mentalCalculGame = new MentalCalculGame(
-          Mockito.mock(IEventBus.class),
+          operationManager,
           calculParameter,
           operatorManager,
           operandManager,
@@ -60,16 +73,21 @@ public class GenerateMentalCalculGameUseCaseTest {
   @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
-    this.generateMentalCalculGameUseCase = new GenerateMentalCalculGameUseCase(eventBus);
+    this.generateMentalCalculGameUseCase = new GenerateMentalCalculGameUseCase(eventBus, randomProvider, gateway);
   }
 
   @ParameterizedTest
   @MethodSource("provideRequestDtoParameter")
-  public void generate_mental_calcul_game_easyLevel(GameLevel gameLevel) {
+  public void generate_mental_calcul_game_easyLevel(String gameLevel) {
 
     /**
      * Given
      */
+
+    List<CardFaceIdent> mockCardFaces = Mockito.mock(List.class);
+    Mockito.when(gateway.getBackCardsAvails()).thenReturn(mockCardFaces);
+    Mockito.when(randomProvider.selectRandomItemInList(Mockito.anyList())).thenReturn(Mockito.mock(CardFaceIdent.class));
+
     IGenerateMentalCalculGameInput useCaseInput = this.generateMentalCalculGameInput(gameLevel);
     GenerateMentalCalculGameUseCase.Input input = new GenerateMentalCalculGameUseCase.Input(useCaseInput);
 
@@ -84,7 +102,7 @@ public class GenerateMentalCalculGameUseCaseTest {
     var generatedData = output.generateMentalCalculGameOutput();
     Assertions.assertNotNull(generatedData);
     Assertions.assertNotNull(generatedData.getOperations());
-    Assertions.assertTrue(isLastDigitValid(gameLevel, generatedData.getOperations()));
+    Assertions.assertTrue(isLastDigitValid(GameLevel.loadGameLevel(gameLevel), generatedData.getOperations()));
 
 
   }
@@ -151,30 +169,20 @@ public class GenerateMentalCalculGameUseCaseTest {
   }
 
 
-  private IGenerateMentalCalculGameInput generateMentalCalculGameInput(GameLevel gameLevel) {
+  private IGenerateMentalCalculGameInput generateMentalCalculGameInput(String gameLevel) {
     return new IGenerateMentalCalculGameInput() {
       @Override
-      public GameLevel getGameLevel() {
+      public String getGameLevel() {
         return gameLevel;
-      }
-
-      @Override
-      public ICardFaceIdent getCardFaceId() {
-        return new ICardFaceIdent() {
-          @Override
-          public String getCardIdent() {
-            return "test";
-          }
-        };
       }
     };
   }
 
   private static Stream<Arguments> provideRequestDtoParameter() {
     return Stream.of(
-            Arguments.of(GameLevel.EASY),
-            Arguments.of(GameLevel.MEDIUM),
-            Arguments.of(GameLevel.DIFFICULT)
+            Arguments.of("EASY"),
+            Arguments.of("MEDIUM"),
+            Arguments.of("DIFFICULT")
     );
   }
 

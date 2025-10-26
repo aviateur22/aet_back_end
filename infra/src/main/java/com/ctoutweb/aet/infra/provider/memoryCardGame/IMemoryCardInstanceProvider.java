@@ -4,10 +4,7 @@ import com.ctoutweb.aet.domain.entity.generateMemoryCardGame.ParameterState;
 import com.ctoutweb.aet.domain.port.generateMemoryCardGame.IGenerateMemoryCardGameInput;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameResponseDto;
-import com.ctoutweb.aet.infra.model.gameText.EndGameErrorLevel;
-import com.ctoutweb.aet.infra.model.gameText.EndGameText;
-import com.ctoutweb.aet.infra.model.gameText.GameEndParameterByLevel;
-import com.ctoutweb.aet.infra.model.gameText.GamePresentation;
+import com.ctoutweb.aet.infra.model.gameText.*;
 import com.ctoutweb.aet.infra.model.memoryCardGame.*;
 
 public interface IMemoryCardInstanceProvider {

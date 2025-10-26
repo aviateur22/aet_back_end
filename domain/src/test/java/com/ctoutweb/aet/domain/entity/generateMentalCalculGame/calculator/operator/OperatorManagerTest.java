@@ -42,14 +42,14 @@ public class OperatorManagerTest {
         List<OperatorType> acceptedOperatorAssociationList = calculParameter.getAcceptedOperatorAssociationList();
         opertorsInGame.forEach(operationInCalcul -> {
             int operatorQuantity = operationInCalcul.getOperatorQuantity();
-            long operatorQuantityListLength = operationInCalcul.getOperators().size();
+            long operatorQuantityListLength = operationInCalcul.getOperatorParameters().size();
             Assertions.assertEquals(operatorQuantity, operatorQuantityListLength);
             Assertions.assertTrue(operatorQuantity <= maxOperatorInCalcul);
             Assertions.assertTrue(operatorQuantity >= minOperatorInCalcul);
 
             // Si il y a plus de 1 operateur on vérifie qu'ils peuvent être mixé
             if(operatorQuantity > 1) {
-                operationInCalcul.getOperators().forEach(operator -> {
+                operationInCalcul.getOperatorParameters().forEach(operator -> {
                     Assertions.assertTrue(acceptedOperatorAssociationList.contains(operator.getOperatorType()));
                 });
             }

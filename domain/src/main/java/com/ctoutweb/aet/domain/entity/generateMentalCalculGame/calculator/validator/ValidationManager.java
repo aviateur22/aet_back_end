@@ -1,8 +1,8 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.validator;
 
+import com.ctoutweb.aet.domain.entity.IMinAndMax;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.IOperation;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.Operation;
 
 public class ValidationManager {
     private final CalculParameter calculParameter;
@@ -20,11 +20,13 @@ public class ValidationManager {
      */
     public boolean isOperationResultValid(IOperation operation) {
         return isCalculatedResponseRespectLastDigitContraint(operation.getValidOperationResponse())
-                && isCalculatedResponseRespectNegativeConstraint(operation.getValidOperationResponse());
+                && isCalculatedResponseRespectNegativeConstraint(operation.getValidOperationResponse())
+                && isCalculatedResponseRespectValueConstraint(operation.getValidOperationResponse());
     }
 
     /**
      * Vérification si le dernier digit est valide
+     *
      * @return boolean - Dernier digit valide
      */
     private boolean isCalculatedResponseRespectLastDigitContraint(double calculatedOperationResult) {
@@ -34,6 +36,7 @@ public class ValidationManager {
 
     /**
      * Vérification si le dernier digit est valide
+     *
      * @return boolean - Dernier digit valide
      */
     private boolean isCalculatedResponseRespectNegativeConstraint(double calculatedOperationResult) {
@@ -41,5 +44,21 @@ public class ValidationManager {
             return true;
 
         return !(calculatedOperationResult < 0);
+    }
+
+    /**
+     *
+     * @param calculatedOperationResult
+     *
+     * @return
+     */
+    private boolean isCalculatedResponseRespectValueConstraint(double calculatedOperationResult) {
+        IMinAndMax<Double> minMaxAcceptedCalculResult = calculParameter.minMaxAcceptedCalculResult;
+
+        if(minMaxAcceptedCalculResult == null)
+            return true;
+
+        return calculatedOperationResult <= minMaxAcceptedCalculResult.getMax()
+                && calculatedOperationResult > minMaxAcceptedCalculResult.getMin();
     }
 }

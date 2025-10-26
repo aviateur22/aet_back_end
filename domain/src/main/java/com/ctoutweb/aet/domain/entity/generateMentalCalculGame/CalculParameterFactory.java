@@ -32,7 +32,8 @@ public class CalculParameterFactory {
                 EasyLevelCalculParameter.IS_NEGATIVE_RESULT_ACCEPTED,
                 EasyLevelCalculParameter.TIME_AVAIL_BY_CALCUL,
                 EasyLevelCalculParameter.ACCPETED_ASSOCIATED_OPERATOR_LIST,
-                EasyLevelCalculParameter.LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST
+                EasyLevelCalculParameter.LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST,
+                EasyLevelCalculParameter.MIN_MAX_ACCEPTED_CALCUL_RESULT
         );
     }
 
@@ -45,7 +46,8 @@ public class CalculParameterFactory {
                 MeduimLevelCalculParameter.IS_NEGATIVE_RESULT_ACCEPTED,
                 MeduimLevelCalculParameter.TIME_AVAIL_BY_CALCUL,
                 MeduimLevelCalculParameter.ACCPETED_ASSOCIATED_OPERATOR_LIST,
-                MeduimLevelCalculParameter.LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST
+                MeduimLevelCalculParameter.LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST,
+                MeduimLevelCalculParameter.MIN_MAX_ACCEPTED_CALCUL_RESULT
         );
     }
 
@@ -58,7 +60,8 @@ public class CalculParameterFactory {
                 DifficultLevelCalculParameter.IS_NEGATIVE_RESULT_ACCEPTED,
                 DifficultLevelCalculParameter.TIME_AVAIL_BY_CALCUL,
                 DifficultLevelCalculParameter.ACCPETED_ASSOCIATED_OPERATOR_LIST,
-                DifficultLevelCalculParameter.LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST
+                DifficultLevelCalculParameter.LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST,
+                DifficultLevelCalculParameter.MIN_MAX_ACCEPTED_CALCUL_RESULT
         );
     }
 }

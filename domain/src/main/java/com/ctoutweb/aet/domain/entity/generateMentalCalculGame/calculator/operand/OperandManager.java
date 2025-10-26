@@ -1,19 +1,16 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand;
 
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse.ProposalResponses;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.Operation;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.ProposalResponse;
-import com.ctoutweb.aet.domain.injector.MethodInjectorContainer;
-import com.ctoutweb.aet.domain.port.generateMentalCalculGame.ICardFaceIdent;
 import com.ctoutweb.aet.domain.util.IEventBus;
 import com.ctoutweb.aet.domain.util.logger.ILogger;
 import com.ctoutweb.aet.domain.util.logger.LogLevel;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.ctoutweb.aet.domain.provider.CoreFactory.COMMON_INSTANCE_PROVIDER;
 
@@ -30,29 +27,9 @@ public class OperandManager {
   private final ILogger LOGGER = COMMON_INSTANCE_PROVIDER.provideLoggerInstance();
 
   /**
-   * Identification de l'operation
-   */
-  int operationIdent;
-
-  /**
-   * Résulat de calcul sur l'opération généré
-   */
-  private double calculatedOperationResult;
-
-  /**
    * Liste des operandes générés
    */
-  private List<Integer> initialOperands;
-
-  /**
-   * Liste des opérateurs générés
-   */
-  private List<OperatorType> initialOperators;
-
-  /**
-   * Liste des porposition de réponses
-   */
-  private List<ProposalResponse> proposalResponses;
+  private final List<Integer> initialOperands = new ArrayList<>();
 
   public OperandManager(
           CalculParameter calculParameter,
@@ -67,21 +44,22 @@ public class OperandManager {
       this.eventBus = eventBus;
   }
 
+  public OperandManager reinitializeOperandManager() {
+    this.initialOperands.clear();
+    return this;
+  }
+
   /**
    * Génération d'un liste d'opérandes
    *
    * @param generatedOperatorParameters Liste des Operateurs avec les parametre générée à l'étape précedente
-   * @param operationPosition Numéro de l'opération qui est en cours de génération
    *
-   * @see com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager
+   * @see OperatorManager
    *
    * @return CalculateOperandResult
    */
-  public OperandManager generateOperands(List<OperatorParameter> generatedOperatorParameters, int operationPosition) {
-    this.operationIdent = operationPosition;
-    this.initialOperands = generateRandomOperand.generateCalculOperand(generatedOperatorParameters);
-    this.initialOperators = generatedOperatorParameters.stream()
-            .map(OperatorParameter::getOperatorType).collect(Collectors.toList());
+  public OperandManager generateOperands(List<OperatorParameter> generatedOperatorParameters) {
+    this.initialOperands.addAll(generateRandomOperand.generateCalculOperand(generatedOperatorParameters));
 
     return this;
   }
@@ -94,7 +72,7 @@ public class OperandManager {
    *
    * @return CalculateOperandResult
    */
-  public OperandManager calculateOperandResult(List<OperatorType> initialOperator, List<Integer> initialOperands) {
+  public double calculateOperandResult(List<OperatorType> initialOperator, List<Integer> initialOperands) {
 
     // Calcul des resultats lié aux opérateur prioritaire
     List<Double> updatedOperands = operandAssociatedToPriorityOperator
@@ -104,11 +82,37 @@ public class OperandManager {
     eventBus.publish(LOGGER.log(LogLevel.INFO, updatedOperands.toString()));
 
     // Calcul final de l'opération
-    this.finalAggregateResult(initialOperator, updatedOperands);
+    double operationResult = this.finalAggregateResult(initialOperator, updatedOperands);
 
-    eventBus.publish(LOGGER.log(LogLevel.INFO, String.valueOf(this.calculatedOperationResult)));
+    eventBus.publish(LOGGER.log(LogLevel.INFO, String.valueOf(operationResult)));
 
-    return this;
+    return operationResult;
+  }
+
+  /**
+   * Calcul du résult de l'opération
+   *
+   * @param initialOperators - List<OperatorType> - Lite des operateurs initiaux
+   * @param updatedOperands - List<Double> - Liste des operandes mise a jour avec les calculs des operateurs prioritaires
+   *
+   * @see OperandAssociatedToPriorityOperator
+   *
+   * @return CalculateOperandResult
+   */
+  private double finalAggregateResult(List<OperatorType> initialOperators, List<Double> updatedOperands) {
+
+    List<OperatorType> lowPriorityOperators = initialOperators
+            .stream()
+            .filter(operator -> OperatorType.ADDITION == operator || OperatorType.SOUSTRACTION == operator )
+            .toList();
+
+    var calculatedOperationResult = updatedOperands.get(0);
+
+    for(int i = 0; i < lowPriorityOperators.size(); i++) {
+      calculatedOperationResult = CalculateOperation.calculateOperationResult(lowPriorityOperators.get(i), calculatedOperationResult, updatedOperands.get(i + 1));
+    }
+
+    return calculatedOperationResult;
   }
 
   /**
@@ -117,59 +121,12 @@ public class OperandManager {
    * @param responseQuantity - Integer - nombre de proposition de réponse à générer
    * @return CalculateOperandResult
    */
-  public OperandManager generateProposalResponse(int responseQuantity) {
-    this.proposalResponses = this.generateProposalResponse
-            .generateProposalResponses(responseQuantity, this.calculatedOperationResult)
-            .getProposalResults();
-    return this;
-  }
-
-  /**
-   * Calcul du résult de l'opération
-   *
-   * @param initialOperators - List<OperatorType> - Lite des operateurs initiaux
-   * @param updatedOperands - List<Double> - Liste des operandes mise a jour avec les calculs des operateurs prioritaires
-   * @see OperandAssociatedToPriorityOperator
-   * @return CalculateOperandResult
-   */
-  private OperandManager finalAggregateResult(List<OperatorType> initialOperators, List<Double> updatedOperands) {
-
-    List<OperatorType> lowPriorityOperators = initialOperators
-            .stream()
-            .filter(operator -> OperatorType.ADDITION == operator || OperatorType.SOUSTRACTION == operator )
-            .toList();
-
-    calculatedOperationResult = updatedOperands.get(0);
-
-    for(int i = 0; i < lowPriorityOperators.size(); i++) {
-      calculatedOperationResult = CalculateOperation.calculateOperationResult(lowPriorityOperators.get(i), calculatedOperationResult, updatedOperands.get(i + 1));
-    }
-
-    return this;
-  }
-
-  public Operation getGeneratedOperation() {
-    MethodInjectorContainer container = MethodInjectorContainer.getInstance();
-    ICardFaceIdent cardIndent = container.resolve(ICardFaceIdent.class);
-
-    Operation generatedOperation = new Operation();
-    generatedOperation
-            .setTimeToCalculate(calculParameter.getTimeAvailableToCalculate())
-            .setOperationIdent(this.operationIdent)
-            .setValidOperationResponse(this.calculatedOperationResult)
-            .loadListOfOperator(this.initialOperators)
-            .loadListOfMentalNumber(this.initialOperands, cardIndent)
-            .loadProposalResponses(this.proposalResponses);
-    
-    return generatedOperation;
+  public List<ProposalResponse>  generateProposalResponse(int responseQuantity, double operationResult) {
+    return this.generateProposalResponse.generateProposalResponses(responseQuantity, operationResult);
   }
 
   public List<Integer> getInitialOperands() {
     return initialOperands;
-  }
-
-  public List<OperatorType> getInitialOperators() {
-    return initialOperators;
   }
 }
 

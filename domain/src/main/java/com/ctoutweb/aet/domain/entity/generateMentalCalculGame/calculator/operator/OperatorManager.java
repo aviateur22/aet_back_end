@@ -117,7 +117,7 @@ public class OperatorManager {
   private int getActualOperatorQuantityInGame(OperatorType operatorToFind) {
     return (int) operationInCalculs
             .stream()
-            .flatMap(actualOperation -> actualOperation.getOperators().stream())
+            .flatMap(actualOperation -> actualOperation.getOperatorParameters().stream())
             .filter(operator -> operator.getOperatorType() == operatorToFind)
             .count();
   }

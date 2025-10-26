@@ -1,7 +1,5 @@
 package com.ctoutweb.aet.infra.model.gameText;
 
-import com.ctoutweb.aet.infra.model.memoryCardGame.IGameTextInformation;
-
 public record GameTextInformationImpl(
         String[] congratulationWords,
         String[] loosingWords,

@@ -1,10 +1,9 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter;
 
+import com.ctoutweb.aet.domain.entity.IMinAndMax;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.IOperation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,11 +48,10 @@ public class CalculParameter {
    */
   private final List<Double> lastCalculatedDigitAcceptedList;
 
-  private List<IOperation> generatedCalculOperations = new ArrayList<>();
-
-  public List<IOperation> getGeneratedCalculOperations() {
-    return generatedCalculOperations;
-  }
+  /**
+   * Born min et max encadrant le resultat d'une operation
+   */
+  public IMinAndMax<Double> minMaxAcceptedCalculResult;
 
   public CalculParameter(
           GameLevel level,
@@ -63,7 +61,8 @@ public class CalculParameter {
           boolean isNegativeCalculResultAccepted,
           int timeAvailableToCalculate,
           List<OperatorType> acceptedOperatorAssociationList,
-          List<Double> lastCalculatedDigitAcceptedList) {
+          List<Double> lastCalculatedDigitAcceptedList,
+          IMinAndMax<Double> minMaxCalculResult) {
     this.gameLevel = level;
     this.calculQuantity = calculQuantity;
     this.minOperatorByCalcul = minOperatorByCalcul;
@@ -71,7 +70,9 @@ public class CalculParameter {
     this.isNegativeCalculResultAccepted = isNegativeCalculResultAccepted;
     this.timeAvailableToCalculate = timeAvailableToCalculate;
     this.acceptedOperatorAssociationList = acceptedOperatorAssociationList;
-    this.lastCalculatedDigitAcceptedList = lastCalculatedDigitAcceptedList;  }
+    this.lastCalculatedDigitAcceptedList = lastCalculatedDigitAcceptedList;
+    this.minMaxAcceptedCalculResult = minMaxCalculResult;
+  }
 
   public List<Double> getLastCalculatedDigitAcceptedList() {
     return lastCalculatedDigitAcceptedList;
@@ -103,5 +104,9 @@ public class CalculParameter {
 
   public int getTimeAvailableToCalculate() {
     return timeAvailableToCalculate;
+  }
+
+  public IMinAndMax<Double> getMinMaxAcceptedCalculResult() {
+    return minMaxAcceptedCalculResult;
   }
 }

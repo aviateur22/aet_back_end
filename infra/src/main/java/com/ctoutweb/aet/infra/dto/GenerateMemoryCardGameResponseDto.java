@@ -2,7 +2,7 @@ package com.ctoutweb.aet.infra.dto;
 
 import com.ctoutweb.aet.infra.model.memoryCardGame.Card;
 import com.ctoutweb.aet.infra.model.memoryCardGame.CardToFind;
-import com.ctoutweb.aet.infra.model.memoryCardGame.IGameTextInformation;
+import com.ctoutweb.aet.infra.model.gameText.IGameTextInformation;
 
 public record GenerateMemoryCardGameResponseDto(
         IGameTextInformation gameTextInformation,

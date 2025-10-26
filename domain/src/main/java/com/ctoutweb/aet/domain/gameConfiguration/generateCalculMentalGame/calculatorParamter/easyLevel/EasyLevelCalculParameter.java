@@ -12,9 +12,10 @@ public static final int CALCUL_QUANTITY = 10;
 public static final int MIN_OPERATOR_BY_CALCUL = 1;
 public static final int MAX_OPERATOR_BY_CALCUL = 2;
 public static final boolean IS_NEGATIVE_RESULT_ACCEPTED = false;
-public static final int TIME_AVAIL_BY_CALCUL = 10;
+public static final int TIME_AVAIL_BY_CALCUL = 15;
 public static final List<OperatorType> ACCPETED_ASSOCIATED_OPERATOR_LIST = List.of(
           OperatorType.ADDITION, OperatorType.SOUSTRACTION
 );
 public static final List<Double> LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST = List.of(0.0, 2.0, 4.0, 6.0, 8.0);
+public static IMinAndMax<Double> MIN_MAX_ACCEPTED_CALCUL_RESULT = new MinAndMaxImpl<>(30.0, 125.0);
 }

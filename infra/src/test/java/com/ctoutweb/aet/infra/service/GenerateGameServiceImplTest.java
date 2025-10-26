@@ -1,21 +1,23 @@
 package com.ctoutweb.aet.infra.service;
 
 import com.ctoutweb.aet.domain.exception.ImageException;
-import com.ctoutweb.aet.infra.adapter.memoryCardGame.MemoryCardGameAdapter;
+import com.ctoutweb.aet.domain.usecase.GenerateMentalCalculGameUseCase;
+import com.ctoutweb.aet.infra.adapter.MemoryCardGameAdapter;
+import com.ctoutweb.aet.infra.adapter.MentalCalculGameAdapter;
 import com.ctoutweb.aet.infra.dto.GenerateMemoryCardGameRequestDto;
 import com.ctoutweb.aet.infra.exception.CardException;
 import com.ctoutweb.aet.infra.model.gameText.GameEndParameterByLevel;
 import com.ctoutweb.aet.infra.model.memoryCardGame.Card;
 import com.ctoutweb.aet.infra.model.memoryCardGame.GameLevel;
 import com.ctoutweb.aet.infra.model.memoryCardGame.GameParameter;
-import com.ctoutweb.aet.infra.model.memoryCardGame.IGameTextInformation;
+import com.ctoutweb.aet.infra.model.gameText.IGameTextInformation;
 import com.ctoutweb.aet.infra.repository.IMemoryCardGameImageFaceRepository;
 import com.ctoutweb.aet.infra.repository.IMemoryCardGameImageFamilyRepository;
 import com.ctoutweb.aet.infra.repository.IMemoryCardGameImageRepository;
 import com.ctoutweb.aet.infra.repository.entity.ImageEntity;
 import com.ctoutweb.aet.infra.repository.entity.MemoryCardGameImageFaceEntity;
 import com.ctoutweb.aet.infra.repository.entity.MemoryCardGameImageFamilyEntity;
-import com.ctoutweb.aet.infra.service.gameService.memoryCardGameService.impl.MemoryCardGameServiceImpl;
+import com.ctoutweb.aet.infra.service.gameService.impl.GenerateGameServiceImpl;
 import com.ctoutweb.aet.infra.service.imageLoaderService.IImageLoaderService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +40,7 @@ import static com.ctoutweb.aet.infra.constant.memoryCardGame.MemoryCardGameConst
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class MemoryCadGameServiceImplTest {
+public class GenerateGameServiceImplTest {
 
   private MemoryCardGameAdapter memoryCardGameAdapter;
   @Mock
@@ -49,9 +51,17 @@ public class MemoryCadGameServiceImplTest {
   private IMemoryCardGameImageFamilyRepository memoryCardGameImageFamilyRepository;
   @Mock
   private IMemoryCardGameImageFaceRepository memoryCardGameImageFaceRepository;
+
+  @Mock
+  private GenerateMentalCalculGameUseCase generateMentalCalculGameUseCase;
+
+  @Mock
+  MentalCalculGameAdapter mentalCalculGameAdapter;
+
+
   private
 
-  MemoryCardGameServiceImpl memoryCardGameService;
+  GenerateGameServiceImpl memoryCardGameService;
 
   @BeforeEach
   void init() {
@@ -62,7 +72,10 @@ public class MemoryCadGameServiceImplTest {
             memoryCardGameImageFamilyRepository,
             memoryCardGameImageFaceRepository);
 
-    memoryCardGameService = new MemoryCardGameServiceImpl(memoryCardGameAdapter);
+    memoryCardGameService = new GenerateGameServiceImpl(
+            memoryCardGameAdapter,
+            generateMentalCalculGameUseCase,
+            mentalCalculGameAdapter);
 
   }
 
