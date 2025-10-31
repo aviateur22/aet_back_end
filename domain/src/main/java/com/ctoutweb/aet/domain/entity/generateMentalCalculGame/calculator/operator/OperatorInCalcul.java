@@ -1,5 +1,5 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.OperatorParameter;
 
 import java.util.*;
 

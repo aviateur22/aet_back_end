@@ -1,6 +1,6 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame;
 
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.difficultLevel.DifficultLevelCalculParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.easyLevel.EasyLevelCalculParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.meduimLevel.MeduimLevelCalculParameter;
@@ -33,7 +33,9 @@ public class CalculParameterFactory {
                 EasyLevelCalculParameter.TIME_AVAIL_BY_CALCUL,
                 EasyLevelCalculParameter.ACCPETED_ASSOCIATED_OPERATOR_LIST,
                 EasyLevelCalculParameter.LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST,
-                EasyLevelCalculParameter.MIN_MAX_ACCEPTED_CALCUL_RESULT
+                EasyLevelCalculParameter.MIN_MAX_ACCEPTED_CALCUL_RESULT,
+                EasyLevelCalculParameter.ARE_INTERMEDIATE_CALCUL_POSITIVE,
+                EasyLevelCalculParameter.MAX_INTERMEDIATE_CALCUL_RESULT
         );
     }
 
@@ -47,7 +49,9 @@ public class CalculParameterFactory {
                 MeduimLevelCalculParameter.TIME_AVAIL_BY_CALCUL,
                 MeduimLevelCalculParameter.ACCPETED_ASSOCIATED_OPERATOR_LIST,
                 MeduimLevelCalculParameter.LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST,
-                MeduimLevelCalculParameter.MIN_MAX_ACCEPTED_CALCUL_RESULT
+                MeduimLevelCalculParameter.MIN_MAX_ACCEPTED_CALCUL_RESULT,
+                MeduimLevelCalculParameter.ARE_INTERMEDIATE_CALCUL_POSITIVE,
+                EasyLevelCalculParameter.MAX_INTERMEDIATE_CALCUL_RESULT
         );
     }
 
@@ -61,7 +65,9 @@ public class CalculParameterFactory {
                 DifficultLevelCalculParameter.TIME_AVAIL_BY_CALCUL,
                 DifficultLevelCalculParameter.ACCPETED_ASSOCIATED_OPERATOR_LIST,
                 DifficultLevelCalculParameter.LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST,
-                DifficultLevelCalculParameter.MIN_MAX_ACCEPTED_CALCUL_RESULT
+                DifficultLevelCalculParameter.MIN_MAX_ACCEPTED_CALCUL_RESULT,
+                DifficultLevelCalculParameter.ARE_INTERMEDIATE_CALCUL_POSITIVE,
+                EasyLevelCalculParameter.MAX_INTERMEDIATE_CALCUL_RESULT
         );
     }
 }

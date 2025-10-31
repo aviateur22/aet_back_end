@@ -3,7 +3,7 @@ package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.opera
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.CalculParameterFactory;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.CalculParameter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -21,7 +21,7 @@ public class OperatorManagerTest {
         /**
          * Given
          */
-        OperatorManager operatorManager = MENTAL_CALCUL_INSTANCE_PROVIDER.provideOperatorManagerInstance(calculParameter);
+        OperatorManager operatorManager = new OperatorManager(calculParameter);
 
         /**
          * when

@@ -1,30 +1,31 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand;
 
+import com.ctoutweb.aet.domain.annotation.InjectConstructorParam;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse.ProposalResponses;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.validator.ValidationManager;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.CalculParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.OperatorParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse.ProposalResponseManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.ProposalResponse;
-import com.ctoutweb.aet.domain.util.IEventBus;
-import com.ctoutweb.aet.domain.util.logger.ILogger;
-import com.ctoutweb.aet.domain.util.logger.LogLevel;
+import com.ctoutweb.aet.domain.event.logger.LogEvent;
+import com.ctoutweb.aet.domain.event.IEventBus;
+import com.ctoutweb.aet.domain.event.logger.LogLevel;
 
 import java.util.*;
 
-import static com.ctoutweb.aet.domain.provider.CoreFactory.COMMON_INSTANCE_PROVIDER;
 
 /**
  * Generation des operandes ainsi que determination du resltat du calcul pour une operation *
  */
 public class OperandManager {
 
+  private final ValidationManager validationManager;
   private final CalculParameter calculParameter;
   private final OperandAssociatedToPriorityOperator operandAssociatedToPriorityOperator;
   private final GenerateRandomOperand generateRandomOperand;
-  private final ProposalResponses generateProposalResponse;
+  private final ProposalResponseManager generateProposalResponse;
   private final IEventBus eventBus;
-  private final ILogger LOGGER = COMMON_INSTANCE_PROVIDER.provideLoggerInstance();
 
   /**
    * Liste des operandes générés
@@ -32,11 +33,13 @@ public class OperandManager {
   private final List<Integer> initialOperands = new ArrayList<>();
 
   public OperandManager(
-          CalculParameter calculParameter,
-          OperandAssociatedToPriorityOperator operandAssociatedToPriorityOperator,
-          GenerateRandomOperand generateRandomOperand,
-          ProposalResponses generateProposalResponse,
-          IEventBus eventBus) {
+          @InjectConstructorParam ValidationManager validationManager,
+          @InjectConstructorParam CalculParameter calculParameter,
+          @InjectConstructorParam OperandAssociatedToPriorityOperator operandAssociatedToPriorityOperator,
+          @InjectConstructorParam GenerateRandomOperand generateRandomOperand,
+          @InjectConstructorParam ProposalResponseManager generateProposalResponse,
+          @InjectConstructorParam IEventBus eventBus) {
+      this.validationManager = validationManager;
       this.calculParameter = calculParameter;
       this.operandAssociatedToPriorityOperator = operandAssociatedToPriorityOperator;
       this.generateRandomOperand = generateRandomOperand;
@@ -72,21 +75,23 @@ public class OperandManager {
    *
    * @return CalculateOperandResult
    */
-  public double calculateOperandResult(List<OperatorType> initialOperator, List<Integer> initialOperands) {
+  public CalculOperandResult calculateOperandResult(List<OperatorType> initialOperator, List<Integer> initialOperands) {
 
     // Calcul des resultats lié aux opérateur prioritaire
-    List<Double> updatedOperands = operandAssociatedToPriorityOperator
+    PriorityOperatorResult priorityOperatorResult = operandAssociatedToPriorityOperator
             .calculPriorityOperatorResult(initialOperator, initialOperands)
             .updateInitialOperandsWithPriorityOperatorResult(initialOperands);
 
-    eventBus.publish(LOGGER.log(LogLevel.INFO, updatedOperands.toString()));
+    List<Double> updatedOperands = priorityOperatorResult.updatedInitialOperandsWithPriorityOperatorResult();
+
+    boolean arePriorityCaclculResultValid = priorityOperatorResult.arePriorityOperatorCalculResultValid();
 
     // Calcul final de l'opération
-    double operationResult = this.finalAggregateResult(initialOperator, updatedOperands);
+    var calculFinalAggregate = this.finalAggregateResult(initialOperator, updatedOperands);
 
-    eventBus.publish(LOGGER.log(LogLevel.INFO, String.valueOf(operationResult)));
+    boolean areAllIntermediateCalculPositive = arePriorityCaclculResultValid && calculFinalAggregate.areLowPriorityOperatorCalculResultValid();
 
-    return operationResult;
+    return new CalculOperandResult(calculFinalAggregate.finalCalculResult(), areAllIntermediateCalculPositive);
   }
 
   /**
@@ -94,12 +99,15 @@ public class OperandManager {
    *
    * @param initialOperators - List<OperatorType> - Lite des operateurs initiaux
    * @param updatedOperands - List<Double> - Liste des operandes mise a jour avec les calculs des operateurs prioritaires
+   *                        Cette liste peut être egale à la initialOperands si il n' ya pas d'operator prioritaire
    *
    * @see OperandAssociatedToPriorityOperator
    *
    * @return CalculateOperandResult
    */
-  private double finalAggregateResult(List<OperatorType> initialOperators, List<Double> updatedOperands) {
+  public LowPriorityOperatorResult finalAggregateResult(List<OperatorType> initialOperators, List<Double> updatedOperands) {
+
+    boolean areLowPriorityCalculValid = true;
 
     List<OperatorType> lowPriorityOperators = initialOperators
             .stream()
@@ -109,10 +117,15 @@ public class OperandManager {
     var calculatedOperationResult = updatedOperands.get(0);
 
     for(int i = 0; i < lowPriorityOperators.size(); i++) {
-      calculatedOperationResult = CalculateOperation.calculateOperationResult(lowPriorityOperators.get(i), calculatedOperationResult, updatedOperands.get(i + 1));
+      calculatedOperationResult = CalculateOperation
+              .calculateOperationResult(lowPriorityOperators.get(i), calculatedOperationResult, updatedOperands.get(i + 1));
+
+      if(!validationManager.areIntermediateCalculValid(calculatedOperationResult))
+        areLowPriorityCalculValid = false;
     }
 
-    return calculatedOperationResult;
+
+    return new LowPriorityOperatorResult(areLowPriorityCalculValid, calculatedOperationResult);
   }
 
   /**
@@ -122,7 +135,10 @@ public class OperandManager {
    * @return CalculateOperandResult
    */
   public List<ProposalResponse>  generateProposalResponse(int responseQuantity, double operationResult) {
-    return this.generateProposalResponse.generateProposalResponses(responseQuantity, operationResult);
+    List<ProposalResponse> proposalResponses = this.generateProposalResponse
+            .generateProposalResponses(responseQuantity, operationResult);
+
+    return this.generateProposalResponse.shuffleProposalResponse(proposalResponses);
   }
 
   public List<Integer> getInitialOperands() {

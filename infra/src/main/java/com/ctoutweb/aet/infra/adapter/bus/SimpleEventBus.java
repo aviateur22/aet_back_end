@@ -1,6 +1,6 @@
-package com.ctoutweb.aet.infra.bus;
+package com.ctoutweb.aet.infra.adapter.bus;
 
-import com.ctoutweb.aet.domain.util.IEventBus;
+import com.ctoutweb.aet.domain.event.IEventBus;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

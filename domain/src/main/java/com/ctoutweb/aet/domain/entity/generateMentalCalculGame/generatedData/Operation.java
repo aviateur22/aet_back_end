@@ -2,7 +2,7 @@ package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData;
 
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.TimeUnit;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse.ProposalResponses;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse.ProposalResponseManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.CardFaceIdent;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class Operation implements IOperation {
      *
      * @param proposalResponses Liste générée de proposition de réponse
      *
-     * @see ProposalResponses
+     * @see ProposalResponseManager
      *
      * @return Operation
      */

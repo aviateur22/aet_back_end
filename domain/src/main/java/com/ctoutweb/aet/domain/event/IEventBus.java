@@ -1,4 +1,4 @@
-package com.ctoutweb.aet.domain.util;
+package com.ctoutweb.aet.domain.event;
 
 import java.util.function.Consumer;
 

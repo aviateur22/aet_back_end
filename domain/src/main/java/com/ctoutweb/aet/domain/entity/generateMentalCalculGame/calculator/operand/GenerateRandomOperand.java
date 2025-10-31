@@ -1,7 +1,8 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand;
 
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
+import com.ctoutweb.aet.domain.annotation.InjectConstructorParam;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.CalculParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.util.NumberUtil;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
 public class GenerateRandomOperand {
     private final CalculParameter calculParameter;
 
-    public GenerateRandomOperand(CalculParameter calculParameter) {
+    public GenerateRandomOperand(@InjectConstructorParam CalculParameter calculParameter) {
         this.calculParameter = calculParameter;
     }
 

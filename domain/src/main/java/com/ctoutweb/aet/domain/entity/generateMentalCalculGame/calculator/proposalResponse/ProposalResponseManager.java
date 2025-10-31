@@ -1,5 +1,6 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse;
 
+import com.ctoutweb.aet.domain.annotation.InjectConstructorParam;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.ProposalResponse;
 import com.ctoutweb.aet.domain.port.RandomProvider;
 import com.ctoutweb.aet.domain.util.NumberUtil;
@@ -7,11 +8,11 @@ import com.ctoutweb.aet.domain.util.NumberUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProposalResponses {
+public class ProposalResponseManager {
 
     private final RandomProvider randomProvider;
 
-    public ProposalResponses(RandomProvider randomProvider) {
+    public ProposalResponseManager(@InjectConstructorParam RandomProvider randomProvider) {
         this.randomProvider = randomProvider;
     }
 
@@ -35,7 +36,18 @@ public class ProposalResponses {
             proposalResults.add(new ProposalResponse(j + 1, proposalResponse));
         }
 
-        return randomProvider.shuffleList(proposalResults);
+      return proposalResults;
+    }
+
+    /**
+     * Mélange la liste des réponses
+     *
+     * @param proposalResponses La liste des réponses
+     *
+     * @return Une copie de la liste des réponse qui a été mélangée
+     */
+    public List<ProposalResponse> shuffleProposalResponse(List<ProposalResponse> proposalResponses) {
+        return randomProvider.shuffleList(proposalResponses);
     }
 
     /**

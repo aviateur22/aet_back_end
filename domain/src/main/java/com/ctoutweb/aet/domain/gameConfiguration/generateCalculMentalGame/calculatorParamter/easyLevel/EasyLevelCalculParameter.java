@@ -7,7 +7,7 @@ import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
 import java.util.List;
 
 public class EasyLevelCalculParameter {
-public static final IMinAndMax<Integer> MIN_AND_MAX_NUMBER = new MinAndMaxImpl<>(2, 125);
+public static final IMinAndMax<Integer> MIN_AND_MAX_NUMBER = new MinAndMaxImpl<>(8, 40);
 public static final int CALCUL_QUANTITY = 10;
 public static final int MIN_OPERATOR_BY_CALCUL = 1;
 public static final int MAX_OPERATOR_BY_CALCUL = 2;
@@ -18,4 +18,6 @@ public static final List<OperatorType> ACCPETED_ASSOCIATED_OPERATOR_LIST = List.
 );
 public static final List<Double> LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST = List.of(0.0, 2.0, 4.0, 6.0, 8.0);
 public static IMinAndMax<Double> MIN_MAX_ACCEPTED_CALCUL_RESULT = new MinAndMaxImpl<>(30.0, 125.0);
+public static boolean ARE_INTERMEDIATE_CALCUL_POSITIVE = true;
+public static double MAX_INTERMEDIATE_CALCUL_RESULT = 50.0;
 }

@@ -1,8 +1,7 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData;
 
-import com.ctoutweb.aet.domain.entity.LevelType;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.CalculParameter;
 
 public class Option implements IOption {
     private String gameLevel;

@@ -1,9 +1,10 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator;
 
+import com.ctoutweb.aet.domain.annotation.InjectConstructorParam;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.CalculParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorParameterFactory;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.util.NumberUtil;
 
 import java.util.*;
@@ -12,7 +13,7 @@ public class OperatorManager {
   private final CalculParameter calculParameter;
   private int operatorQuantityInGame;
   private final List<OperatorInCalcul> operationInCalculs = new ArrayList<>();
-  public OperatorManager(CalculParameter calculParameter) {
+  public OperatorManager(@InjectConstructorParam CalculParameter calculParameter) {
     this.calculParameter = calculParameter;
   }
   /**

@@ -1,18 +1,20 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame;
 
+import com.ctoutweb.aet.domain.annotation.InjectConstructorParam;
 import com.ctoutweb.aet.domain.entity.JobGame;
 import com.ctoutweb.aet.domain.entity.gameText.IGameTextInformation;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operand.OperandManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operation.OperationManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorInCalcul;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.operator.OperatorManager;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.CalculParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.validator.ValidationManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.gameText.GameTextInformation;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.gameText.GameTextManager;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.IOperation;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.IOption;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.Operation;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.generatedData.Option;
 import com.ctoutweb.aet.domain.port.generateMentalCalculGame.IGenerateMentalCalculGameOutput;
 import com.ctoutweb.aet.domain.usecase.GenerateMentalCalculGameUseCase;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
  */
 public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.Input, GenerateMentalCalculGameUseCase.Output> {
 
+  private static final int MAXIMUM_ATTEMPT = 100;
   private final OperationManager operationManager;
   private final CalculParameter calculParameter;
   private final OperatorManager operatorManager;
@@ -54,12 +57,12 @@ public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.In
   private GameTextInformation gameTextInformation;
 
   public MentalCalculGame(
-          OperationManager operationManager,
-          CalculParameter parameter,
-          OperatorManager operatorManager,
-          OperandManager operandManager,
-          ValidationManager validationManager,
-          GameTextManager gameTextManager) {
+          @InjectConstructorParam OperationManager operationManager,
+          @InjectConstructorParam CalculParameter parameter,
+          @InjectConstructorParam OperatorManager operatorManager,
+          @InjectConstructorParam OperandManager operandManager,
+          @InjectConstructorParam ValidationManager validationManager,
+          @InjectConstructorParam GameTextManager gameTextManager) {
     this.operationManager = operationManager;
     this.calculParameter = parameter;
     this.operatorManager = operatorManager;
@@ -153,19 +156,32 @@ public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.In
    *
    * @return CalculGenerator
    */
-  private MentalCalculGame generateOperandForCalculGame() {
+  public MentalCalculGame generateOperandForCalculGame() {
     if(operatorsInCalculs.isEmpty())
       return this;
 
+    boolean areAllIntermediateCalculValid = true;
+
     for(OperatorInCalcul operator : operatorsInCalculs) {
       int attempts = 0;
-      IOperation operation;
+      IOperation operation = null;
 
       do {
-        operation = this.generateSingleOperation(operator);
+        var generatedOperation = this.generateSingleOperation(operator);
+        operation = generatedOperation.generatedOperation();
+        areAllIntermediateCalculValid = generatedOperation.areAllIntermediateCalculValid();
+
         attempts++;
 
-      } while(attempts < 100 && !validationManager.isOperationResultValid(operation)) ;
+        if(attempts == MAXIMUM_ATTEMPT) {
+          operation = operationManager
+                  .generateDefaultOperation(
+                          operator.getOperationPosition(),
+                          calculParameter.getTimeAvailableToCalculate());
+          break;
+        }
+
+      } while(!validationManager.isGeneratedOperationValid(operation) || !areAllIntermediateCalculValid);
 
       this.operations.add(operation);
     };
@@ -180,7 +196,7 @@ public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.In
    *
    * @return OperationInformation - Les données générées sur l'operation
    */
-  private IOperation generateSingleOperation(OperatorInCalcul operatorInCalcul) {
+  public GeneratedOperation generateSingleOperation(OperatorInCalcul operatorInCalcul) {
 
     List<OperatorType> initialOperators = operatorInCalcul
             .getOperatorParameters()
@@ -189,19 +205,25 @@ public class MentalCalculGame extends JobGame<GenerateMentalCalculGameUseCase.In
             .collect(Collectors.toList());
 
 
-    double operationResult = operandManager
+    var calculOperandResult = operandManager
             .reinitializeOperandManager()
             .generateOperands(operatorInCalcul.getOperatorParameters())
             .calculateOperandResult(initialOperators, operandManager.getInitialOperands());
 
-    var proposalResponses = operandManager.generateProposalResponse(4, operationResult);
+    var proposalResponses = operandManager.generateProposalResponse(4, calculOperandResult.calculResult());
 
-    return operationManager.getGeneratedOperation(
+    Operation generatedOperation = operationManager.getGeneratedOperation(
             operatorInCalcul.getOperationPosition(),
             calculParameter.getTimeAvailableToCalculate(),
-            operationResult,
+            calculOperandResult.calculResult(),
             initialOperators,
             operandManager.getInitialOperands(),
             proposalResponses);
+
+    return new GeneratedOperation(generatedOperation, calculOperandResult.areAllIntermediateCalculValid());
+  }
+
+  public List<OperatorInCalcul> getOperatorsInCalculs() {
+    return operatorsInCalculs;
   }
 }

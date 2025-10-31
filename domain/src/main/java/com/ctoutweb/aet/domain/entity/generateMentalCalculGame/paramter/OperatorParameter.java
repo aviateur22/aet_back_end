@@ -1,4 +1,4 @@
-package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter;
+package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter;
 
 import com.ctoutweb.aet.domain.entity.IMinAndMax;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;

@@ -4,12 +4,12 @@ import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.CalculParameterFa
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.GameLevel;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorType;
 import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.OperatorParameterFactory;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.CalculParameter;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
-import com.ctoutweb.aet.domain.injector.MethodInjectorContainer;
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.CardFaceIdent;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.proposalResponse.ProposalResponseManager;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.validator.ValidationManager;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.CalculParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.port.RandomProvider;
-import com.ctoutweb.aet.domain.util.IEventBus;
+import com.ctoutweb.aet.domain.event.IEventBus;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +30,8 @@ import static com.ctoutweb.aet.domain.provider.CoreFactory.MENTAL_CALCUL_INSTANC
 class OperandManagerTest {
 
   OperandAssociatedToPriorityOperator operandAssociatedToPriorityOperator;
+
+  @Mock
   OperandManager operandManager;
 
   @Mock
@@ -44,8 +46,19 @@ class OperandManagerTest {
   public void init() {
     MockitoAnnotations.openMocks(this);
 
-    operandAssociatedToPriorityOperator = MENTAL_CALCUL_INSTANCE_PROVIDER.provideOperandAssociatedToPriorityOperatorInstance();
-    operandManager = MENTAL_CALCUL_INSTANCE_PROVIDER.provideOperandManagerInstance(calculParameter, eventBus, randomProvider);
+    ValidationManager validationManager = new ValidationManager(calculParameter);
+    operandAssociatedToPriorityOperator = new OperandAssociatedToPriorityOperator(validationManager);
+    GenerateRandomOperand generateRandomOperand = new GenerateRandomOperand(calculParameter);
+    ProposalResponseManager proposalResponseManager = new ProposalResponseManager(randomProvider);
+
+    operandManager = new OperandManager(
+            validationManager,
+            calculParameter,
+            operandAssociatedToPriorityOperator,
+            generateRandomOperand,
+            proposalResponseManager,
+            eventBus
+    );
   }
 
   @Test
@@ -381,9 +394,89 @@ class OperandManagerTest {
     /**
      * then - Vérification du resultat
      */
-    Assertions.assertEquals(2, calculateResult1);
-    Assertions.assertEquals(32, calculateResult2);
-    Assertions.assertEquals(7, calculateResult3);
+    Assertions.assertEquals(2, calculateResult1.calculResult());
+    Assertions.assertEquals(32, calculateResult2.calculResult());
+    Assertions.assertEquals(7, calculateResult3.calculResult());
+  }
+
+  @Test
+  void finalAggregateResult_areIntermediateCalculPositive_should_be_positif() {
+    /**
+     * Given
+     */
+    List<OperatorType> initialOperator = List.of(OperatorType.ADDITION, OperatorType.ADDITION);
+    List<Double> updateOperands = List.of(5.0, 5.0, 5.0);
+
+    /**
+     * When
+     */
+    LowPriorityOperatorResult calculOperandResult = operandManager.finalAggregateResult(initialOperator, updateOperands);
+
+    /**
+     * then
+     */
+    Assertions.assertTrue(calculOperandResult.areLowPriorityOperatorCalculResultValid());
+    Assertions.assertEquals(15, calculOperandResult.finalCalculResult());
+  }
+
+  @Test
+  void finalAggregateResult_areIntermediateCalculPositive_should_be_negatif_when_all_operator_negative() {
+    /**
+     * Given
+     */
+    List<OperatorType> initialOperator = List.of(OperatorType.SOUSTRACTION, OperatorType.SOUSTRACTION);
+    List<Double> updateOperands = List.of(32.0, 36.0, 50.0);
+
+    /**
+     * When
+     */
+    LowPriorityOperatorResult calculOperandResult = operandManager.finalAggregateResult(initialOperator, updateOperands);
+
+    /**
+     * then
+     */
+    Assertions.assertFalse(calculOperandResult.areLowPriorityOperatorCalculResultValid());
+    Assertions.assertEquals(-54, calculOperandResult.finalCalculResult());
+  }
+
+  @Test
+  void finalAggregateResult_areIntermediateCalculPositive_should_be_negatif_when_last_operator_is_negative() {
+    /**
+     * Given
+     */
+    List<OperatorType> initialOperator = List.of(OperatorType.ADDITION, OperatorType.SOUSTRACTION);
+    List<Double> updateOperands = List.of(32.0, 36.0, 70.0);
+
+    /**
+     * When
+     */
+    LowPriorityOperatorResult calculOperandResult = operandManager.finalAggregateResult(initialOperator, updateOperands);
+
+    /**
+     * then
+     */
+    Assertions.assertFalse(calculOperandResult.areLowPriorityOperatorCalculResultValid());
+    Assertions.assertEquals(-2, calculOperandResult.finalCalculResult());
+  }
+
+  @Test
+  void finalAggregateResult_areIntermediateCalculPositive_should_be_negatif_when_first_operator_is_negative() {
+    /**
+     * Given
+     */
+    List<OperatorType> initialOperator = List.of(OperatorType.SOUSTRACTION, OperatorType.ADDITION);
+    List<Double> updateOperands = List.of(32.0, 36.0, 70.0);
+
+    /**
+     * When
+     */
+    LowPriorityOperatorResult calculOperandResult = operandManager.finalAggregateResult(initialOperator, updateOperands);
+
+    /**
+     * then
+     */
+    Assertions.assertFalse(calculOperandResult.areLowPriorityOperatorCalculResultValid());
+    Assertions.assertEquals(66, calculOperandResult.finalCalculResult());
   }
 
   @ParameterizedTest
@@ -410,16 +503,16 @@ class OperandManagerTest {
      * Given
      */
     var initialOperators = operatorParameters.stream().map(OperatorParameter::getOperatorType).toList();
-    Mockito.when(randomProvider.shuffleList(Mockito.anyList())).thenReturn(Mockito.anyList());
+    Mockito.when(randomProvider.shuffleList(Mockito.anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
     /**
      * when
      */
-    var operationResult = operandManager
+    var generatedResult = operandManager
             .generateOperands(operatorParameters)
             .calculateOperandResult(initialOperators, operandManager.getInitialOperands());
 
-    var proposalResponses = operandManager.generateProposalResponse(4, operationResult);
+    var proposalResponses = operandManager.generateProposalResponse(4, generatedResult.calculResult());
 
     /**
      * then
@@ -427,7 +520,7 @@ class OperandManagerTest {
     Assertions.assertEquals(4, proposalResponses.size());
     Assertions.assertEquals(1, proposalResponses
             .stream()
-            .filter(proposal -> proposal.proposalResponse() == operationResult)
+            .filter(proposal -> proposal.proposalResponse() == generatedResult.calculResult())
             .count());
 
   }

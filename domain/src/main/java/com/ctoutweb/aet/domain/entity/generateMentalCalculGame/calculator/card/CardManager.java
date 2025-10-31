@@ -1,5 +1,6 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.card;
 
+import com.ctoutweb.aet.domain.annotation.InjectConstructorParam;
 import com.ctoutweb.aet.domain.exception.MentalGameException;
 import com.ctoutweb.aet.domain.port.generateMentalCalculGame.IGenerateMentalCalculGameGateway;
 import com.ctoutweb.aet.domain.port.RandomProvider;
@@ -14,7 +15,9 @@ public class CardManager {
     private final IGenerateMentalCalculGameGateway IGenerateMentalCalculGameGateway;
     private final RandomProvider randomProvider;
 
-    public CardManager(IGenerateMentalCalculGameGateway IGenerateMentalCalculGameGateway, RandomProvider randomProvider) {
+    public CardManager(
+            @InjectConstructorParam IGenerateMentalCalculGameGateway IGenerateMentalCalculGameGateway,
+            @InjectConstructorParam RandomProvider randomProvider) {
         this.IGenerateMentalCalculGameGateway = IGenerateMentalCalculGameGateway;
         this.randomProvider = randomProvider;
     }

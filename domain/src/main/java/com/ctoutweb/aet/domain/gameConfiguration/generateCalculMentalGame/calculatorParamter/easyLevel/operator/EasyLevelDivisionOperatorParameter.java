@@ -4,6 +4,6 @@ import com.ctoutweb.aet.domain.entity.IMinAndMax;
 import com.ctoutweb.aet.domain.entity.MinAndMaxImpl;
 
 public class EasyLevelDivisionOperatorParameter {
-public static final IMinAndMax<Integer> MIN_AND_MAX_NUMBER = new MinAndMaxImpl<>(2, 100);
+public static final IMinAndMax<Integer> MIN_AND_MAX_NUMBER = new MinAndMaxImpl<>(10, 50);
 public static final int OPERATOR_PRESENCE_PERCENT = 0;
 }

@@ -1,4 +1,4 @@
-package com.ctoutweb.aet.domain.util.logger;
+package com.ctoutweb.aet.domain.event.logger;
 
 public enum LogLevel {
     INFO,

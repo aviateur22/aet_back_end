@@ -14,7 +14,7 @@ public class ConstructorInjectorContainer {
     private final Map<Class<?>, Object> registry = new HashMap<>();
 
     private ConstructorInjectorContainer() {
-        throw new IllegalStateException("");
+        //throw new IllegalStateException("");
     }
 
     public static ConstructorInjectorContainer getInstance() {
@@ -40,14 +40,13 @@ public class ConstructorInjectorContainer {
             if(parameter.isAnnotationPresent(InjectConstructorParam.class)){
                 Class<?> paramType = parameter.getType();
                 if(!registry.containsKey(paramType))
-                    throw new IllegalArgumentException("Pas de dépendance enregistré pour {}" + parameter.getType());
+                    throw new IllegalArgumentException("Erreur instatanciation pour la class " +  type + "pas de dépendance enregistré pour {}" + parameter.getType());
                 args[i] = registry.get(paramType);
             } else {
-                throw new IllegalArgumentException("Le paramètre doit être annoté avec @InjectConstructorParam : " + parameter.getName());
+                throw new IllegalArgumentException("Erreur instatanciation pour la class " +  type + " pourLe paramètre doit être annoté avec @InjectConstructorParam : " + parameter.getName());
             }
         }
 
         return type.cast(constructor.newInstance(args));
     }
-
 }

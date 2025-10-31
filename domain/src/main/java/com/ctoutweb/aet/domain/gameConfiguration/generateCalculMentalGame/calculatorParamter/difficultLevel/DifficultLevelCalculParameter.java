@@ -18,4 +18,6 @@ public static final List<OperatorType> ACCPETED_ASSOCIATED_OPERATOR_LIST = List.
 );
   public static final List<Double> LAST_CALCULTED_DIGIT_ACCEPEDTED_LIST = List.of(0.0, 2.0, 4.0, 6.0, 8.0);
   public static IMinAndMax<Double> MIN_MAX_ACCEPTED_CALCUL_RESULT = null;
+  public static boolean ARE_INTERMEDIATE_CALCUL_POSITIVE = false;
+  public static double MAX_INTERMEDIATE_CALCUL_RESULT = 350.0;
 }

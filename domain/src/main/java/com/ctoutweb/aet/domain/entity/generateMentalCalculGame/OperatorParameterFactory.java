@@ -1,6 +1,6 @@
 package com.ctoutweb.aet.domain.entity.generateMentalCalculGame;
 
-import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.calculator.paramter.OperatorParameter;
+import com.ctoutweb.aet.domain.entity.generateMentalCalculGame.paramter.OperatorParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.difficultLevel.operator.DifficultLevelAdditionOperatorParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.difficultLevel.operator.DifficultLevelDivisionOperatorParameter;
 import com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame.calculatorParamter.difficultLevel.operator.DifficultLevelMultiplicationOperatorParameter;

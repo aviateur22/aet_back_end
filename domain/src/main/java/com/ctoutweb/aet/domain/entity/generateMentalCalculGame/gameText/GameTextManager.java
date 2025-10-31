@@ -14,6 +14,7 @@ import static com.ctoutweb.aet.domain.gameConfiguration.generateCalculMentalGame
  * Chargement du text du jeu
  */
 public class GameTextManager {
+
     public GameTextInformation loadGameTextInformation() {
 
         IGameTextPresentation gameTextPresentation = loadGamePresentation();
