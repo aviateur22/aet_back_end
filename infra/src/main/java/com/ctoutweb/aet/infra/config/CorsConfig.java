@@ -29,6 +29,7 @@ public class CorsConfig {
     UrlBasedCorsConfigurationSource source =new UrlBasedCorsConfigurationSource();
 
     LOGGER.info(()->String.format("[CorsConfig] - [corsConfigurationSource] API_VERSION: %s", apiPathConfig.getPath(ApiPathAvail.GAMES) ));
+    LOGGER.info(()->String.format("[CorsConfig] - [corsConfigurationSource] CorsDomain: %s", Arrays.asList(corsDomains.split(","))));
 
     // Configuration Cors pour les jeux
     CorsConfiguration memoryGameCors = new CorsConfiguration();

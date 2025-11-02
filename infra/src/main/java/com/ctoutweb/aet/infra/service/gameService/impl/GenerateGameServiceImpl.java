@@ -38,7 +38,7 @@ public class GenerateGameServiceImpl implements IGenerateGameService {
 
     var inputBoundary = memoryCardGameAdapter.mapToCoreInputBoundary(dto);
 
-    LOGGER.info(()->String.format("[MemoryCardGameServiceImpl] - [GenerateMemoryCardGameResponseDto] dto: %s", dto));
+    LOGGER.info(()->String.format("[GenerateGameServiceImpl] - [GenerateMemoryCardGameResponseDto] dto: %s", dto));
     var input = coreDomainInstanceProvider.provideInput(inputBoundary);
     var usecase = coreBusinessInstanceProvider.provideUseCase(memoryCardGameAdapter);
     var outpout = usecase.execute(input);
@@ -54,6 +54,7 @@ public class GenerateGameServiceImpl implements IGenerateGameService {
 
   @Override
   public GenerateMentalGameResponseDto generateMentalGame(GenerateMentalGameRequestDto dto) {
+    LOGGER.info(()->String.format("[GenerateGameServiceImpl] - [generateMentalGame] dto: %s", dto));
     GenerateMentalCalculGameUseCase.Output output = this.generateMentalCalculGameUseCase.execute(this.mentalCalculGameAdapter.loadUseCaseInput(dto));
     return mentalCalculGameAdapter.mapToInfra(output.generateMentalCalculGameOutput());
   }
